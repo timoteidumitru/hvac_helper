@@ -1,4 +1,4 @@
-## React Accordion Form - MERN stack
+## HVAC Helper App
 
 ### Project guide
 
