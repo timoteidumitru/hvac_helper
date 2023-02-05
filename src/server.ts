@@ -25,7 +25,9 @@ const StartServer = () => {
 
     res.on('finish', () => {
       // Log the res
-      Logging.info(`Result - METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}] - STATUS: [${res.statusCode}]`);
+      Logging.info(
+        `Result - METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}] - STATUS: [${res.statusCode}]`
+      );
     });
 
     next();
@@ -66,5 +68,7 @@ const StartServer = () => {
   });
 
   // Server starts
-  http.createServer(router).listen(config.server.port, () => Logging.info(`Server is running on port ${config.server.port}`));
+  http
+    .createServer(router)
+    .listen(config.server.port, () => Logging.info(`Server is running on port ${config.server.port}`));
 };
