@@ -21,7 +21,9 @@ export default function Login() {
       .then((result) => {
         console.log('Response from server: ', result);
         if (result.email === sendData.email) {
-          navigate('/dashboard');
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 700);
         }
       })
       .catch((err) => console.log('Error on POST data ', err));
