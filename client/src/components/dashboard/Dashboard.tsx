@@ -113,7 +113,7 @@ export default function Dashboard() {
             color="inherit"
             edge="end"
             onClick={handleLogOff}
-            sx={{ mr: 2, justifyContent: 'flex-end', ...(open && { display: 'none' }) }}
+            sx={{ mr: 2, ...(open && { display: 'none' }) }}
           >
             <SettingsPowerIcon />
           </IconButton>
@@ -132,25 +132,46 @@ export default function Dashboard() {
         anchor="left"
         open={open}
       >
-        <DrawerHeader>
+        <DrawerHeader sx={{ justifyContent: 'space-between' }}>
+          <IconButton color="inherit" edge="end" onClick={handleLogOff}>
+            <SettingsPowerIcon />
+          </IconButton>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
         <Divider />
         <List>
-          {['Timesheet', 'Order List', 'Delivery List'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>{index < 1 ? <EventAvailableIcon /> : <FactCheckIcon />}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-              <Divider />
-            </ListItem>
-          ))}
+          <ListItem disablePadding>
+            <ListItemButton onClick={handleDrawerClose}>
+              <ListItemIcon>
+                <EventAvailableIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Timesheet'} />
+            </ListItemButton>
+            <Divider />
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton onClick={handleDrawerClose}>
+              <ListItemIcon>
+                <FactCheckIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Order List'} />
+            </ListItemButton>
+            <Divider />
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton onClick={handleDrawerClose}>
+              <ListItemIcon>
+                <FactCheckIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Delivery List'} />
+            </ListItemButton>
+            <Divider />
+          </ListItem>
         </List>
       </Drawer>
-      <Main open={false}>
+      <Main open={false} onClick={handleDrawerClose} sx={{ ...(open && { backgroundColor: 'rgba(0,0,0, 0.66)' }) }}>
         <DrawerHeader />
         <Typography paragraph>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
