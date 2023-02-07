@@ -1,14 +1,19 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import './login.scss';
 
 export default function Login() {
   const navigate = useNavigate();
+  const [errors, setErrors] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const sendData = Object.fromEntries(data.entries());
+    if (sendData.email === '' && sendData.password === '') {
+      setErrors(true);
+    }
     console.log("Data you've send to server: ", Object.fromEntries(data.entries()));
     fetch('http://localhost:7079/user/login', {
       method: 'POST',
@@ -22,12 +27,15 @@ export default function Login() {
         console.log('Response from server: ', result);
         if (result.email === sendData.email) {
           localStorage.setItem('isLogged', 'true');
+          setErrors(false);
           setTimeout(() => {
             navigate('/dashboard');
           }, 700);
         }
       })
-      .catch((err) => console.log('Error on POST data ', err));
+      .catch((err) => {
+        console.log('Error on POST data ', err);
+      });
   };
 
   return (
@@ -37,6 +45,7 @@ export default function Login() {
           <div className="login-top">
             <h2>Login</h2>
           </div>
+          {errors ? <p className="login-error">Please enter correct credentials!</p> : ''}
           <div className="login-bottom">
             <div className="login-email">
               <label htmlFor="email">Email: </label>
