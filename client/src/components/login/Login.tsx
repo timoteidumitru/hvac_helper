@@ -21,6 +21,7 @@ export default function Login() {
       .then((result) => {
         console.log('Response from server: ', result);
         if (result.email === sendData.email) {
+          localStorage.setItem('isLogged', 'true');
           setTimeout(() => {
             navigate('/dashboard');
           }, 700);
