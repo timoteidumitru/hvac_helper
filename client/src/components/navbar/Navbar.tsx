@@ -1,3 +1,4 @@
+import React from 'react';
 import './navbar.scss';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -19,9 +20,9 @@ import ListItemText from '@mui/material/ListItemText';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import FactCheckIcon from '@mui/icons-material/FactCheck';
 import SettingsPowerIcon from '@mui/icons-material/SettingsPower';
-import React from 'react';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { textTransform } from '@mui/system';
 
 const drawerWidth = 240;
 
@@ -89,7 +90,7 @@ export default function Navbar() {
   const handleLogOff = () => {
     localStorage.setItem('isLogged', 'false');
     setTimeout(() => {
-      navigate('/login');
+      navigate('/');
     }, 700);
   };
 
@@ -144,7 +145,18 @@ export default function Navbar() {
         <Divider />
         <List>
           <ListItem disablePadding>
-            <Link to="/timesheet">
+            <Link to="/dashboard" style={{ textDecoration: 'none', color: 'black' }}>
+              <ListItemButton onClick={handleDrawerClose}>
+                <ListItemIcon>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Dashboard'} />
+              </ListItemButton>
+            </Link>
+            <Divider />
+          </ListItem>
+          <ListItem disablePadding>
+            <Link to="/timesheet" style={{ textDecoration: 'none', color: 'black' }}>
               <ListItemButton onClick={handleDrawerClose}>
                 <ListItemIcon>
                   <EventAvailableIcon />
@@ -155,7 +167,7 @@ export default function Navbar() {
             <Divider />
           </ListItem>
           <ListItem disablePadding>
-            <Link to="/order-list">
+            <Link to="/order-list" style={{ textDecoration: 'none', color: 'black' }}>
               <ListItemButton onClick={handleDrawerClose}>
                 <ListItemIcon>
                   <FactCheckIcon />
@@ -166,10 +178,10 @@ export default function Navbar() {
             <Divider />
           </ListItem>
           <ListItem disablePadding>
-            <Link to="/delivery-list">
+            <Link to="/delivery-list" style={{ textDecoration: 'none', color: 'black' }}>
               <ListItemButton onClick={handleDrawerClose}>
                 <ListItemIcon>
-                  <FactCheckIcon />
+                  <LocalShippingIcon />
                 </ListItemIcon>
                 <ListItemText primary={'Delivery List'} />
               </ListItemButton>
