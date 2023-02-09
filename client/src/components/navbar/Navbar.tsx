@@ -115,7 +115,7 @@ export default function Navbar() {
             color="inherit"
             edge="end"
             onClick={handleLogOff}
-            sx={{ mr: 2, ...(open && { display: 'none' }) }}
+            sx={{ mr: 0, ...(open && { display: 'none' }) }}
           >
             <SettingsPowerIcon />
           </IconButton>
@@ -135,11 +135,11 @@ export default function Navbar() {
         open={open}
       >
         <DrawerHeader sx={{ justifyContent: 'space-between' }}>
-          <IconButton color="inherit" edge="end" onClick={handleLogOff}>
-            <SettingsPowerIcon />
-          </IconButton>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          </IconButton>
+          <IconButton color="inherit" edge="start" onClick={handleLogOff}>
+            <SettingsPowerIcon />
           </IconButton>
         </DrawerHeader>
         <Divider />

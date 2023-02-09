@@ -1,7 +1,5 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useContext } from 'react';
-import { UserContext } from './contexts/UserContext';
 import Login from './components/login/Login';
 import Register from './components/register/Register';
 import Dashboard from './components/dashboard/Dashboard';
@@ -10,11 +8,12 @@ import OrderList from './components/orderList/OrderList';
 import DeliveryList from './components/deliveryList/DeliveryList';
 import Home from './components/home/Home';
 import Navbar from './components/navbar/Navbar';
+import { LoginContextProvider } from './contexts/LoginContext';
 
 function App() {
   return (
     <BrowserRouter>
-      <UserContext.Provider>
+      <LoginContextProvider>
         <Routes>
           <Route path="/" element={<Navbar />}>
             <Route index element={<Home />} />
@@ -27,7 +26,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
         </Routes>
-      </UserContext.Provider>
+      </LoginContextProvider>
     </BrowserRouter>
   );
 }

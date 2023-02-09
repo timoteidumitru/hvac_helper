@@ -1,41 +1,54 @@
-import { useState } from 'react';
+import React, { useContext, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { LoginContext } from '../../contexts/LoginContext';
 import './login.scss';
+
+interface LoginData {
+  email: string;
+  password: string;
+}
 
 export default function Login() {
   const navigate = useNavigate();
-  const [errors, setErrors] = useState(false);
+  const { errors, setErrors, loginData, setLoginData } = useContext(LoginContext);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    const sendData = Object.fromEntries(data.entries());
-    if (sendData.email === '' && sendData.password === '') {
-      setErrors(true);
-    }
-    console.log("Data you've send to server: ", Object.fromEntries(data.entries()));
-    fetch('http://localhost:7079/user/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(sendData)
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        console.log('Response from server: ', result);
-        if (result.email === sendData.email) {
-          setErrors(false);
-          setTimeout(() => {
-            navigate('/dashboard');
-          }, 700);
-        }
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const data = new FormData(e.currentTarget);
+      const sendData: LoginData = {
+        email: data.get('email') as string,
+        password: data.get('password') as string
+      };
+
+      if (sendData.email === '' && sendData.password === '') {
+        setErrors(true);
+      }
+
+      fetch('http://localhost:7079/user/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(sendData)
       })
-      .catch((err) => {
-        console.log('Error on POST data ', err);
-      });
-  };
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.email === sendData.email) {
+            setErrors(false);
+            setLoginData(sendData);
+            setTimeout(() => {
+              navigate('/dashboard');
+            }, 700);
+          }
+        })
+        .catch((err) => {
+          console.log('Error on POST data ', err);
+        });
+    },
+    [navigate, setErrors, setLoginData]
+  );
 
   return (
     <form className="form-container" onSubmit={(e) => handleSubmit(e)}>
