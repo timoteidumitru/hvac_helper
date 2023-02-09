@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './components/login/Login';
 import Register from './components/register/Register';
@@ -11,9 +11,15 @@ import Navbar from './components/navbar/Navbar';
 import { LoginContext } from './contexts/LoginContext';
 
 function App() {
-  const { loginData } = useContext(LoginContext);
+  const { loginData, setLoginData } = useContext(LoginContext);
   const isUserLoggedIn = Object.values(loginData).every((value) => value !== '');
-  console.log(loginData);
+
+  useEffect(() => {
+    const savedLoginData = localStorage.getItem('loginData');
+    if (savedLoginData) {
+      setLoginData(JSON.parse(savedLoginData));
+    }
+  }, []);
 
   return (
     <BrowserRouter>

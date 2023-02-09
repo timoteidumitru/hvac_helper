@@ -88,7 +88,7 @@ export default function Navbar() {
   };
 
   const handleLogOff = () => {
-    localStorage.setItem('isLogged', 'false');
+    localStorage.removeItem('loginData');
     setTimeout(() => {
       navigate('/');
     }, 700);

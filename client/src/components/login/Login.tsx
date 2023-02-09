@@ -38,6 +38,7 @@ export default function Login() {
           if (result.email === sendData.email) {
             setErrors(false);
             setLoginData(sendData);
+            localStorage.setItem('loginData', JSON.stringify(loginData));
             setTimeout(() => {
               navigate('/dashboard');
             }, 700);
