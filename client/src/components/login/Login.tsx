@@ -11,7 +11,7 @@ interface LoginData {
 
 export default function Login() {
   const navigate = useNavigate();
-  const { errors, setErrors, loginData, setLoginData } = useContext(LoginContext);
+  const { errors, setErrors, setLoginData } = useContext(LoginContext);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -38,7 +38,7 @@ export default function Login() {
           if (result.email === sendData.email) {
             setErrors(false);
             setLoginData(sendData);
-            localStorage.setItem('loginData', JSON.stringify(loginData));
+            localStorage.setItem('loginData', JSON.stringify(sendData));
             setTimeout(() => {
               navigate('/dashboard');
             }, 700);
