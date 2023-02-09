@@ -26,7 +26,6 @@ export const LoginContext = createContext<LoginContextData>({
 export const LoginContextProvider: React.FC<Props> = ({ children }) => {
   const [errors, setErrors] = useState(false);
   const [loginData, setLoginData] = useState<LoginData>({ email: '', password: '' });
-
   return (
     <LoginContext.Provider value={{ errors, setErrors, loginData, setLoginData }}>{children}</LoginContext.Provider>
   );
