@@ -109,7 +109,11 @@ export default function Navbar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div">
-            <p style={{ textTransform: 'capitalize' }}>{window.location.pathname.replace('/', '').replace('-', ' ')}</p>
+            <p style={{ textTransform: 'capitalize' }}>
+              {window.location.pathname.replace('/', '').replace('-', ' ') == 'dashboard'
+                ? ''
+                : window.location.pathname.replace('/', '').replace('-', ' ')}{' '}
+            </p>
           </Typography>
           <IconButton
             color="inherit"

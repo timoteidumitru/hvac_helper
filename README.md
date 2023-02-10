@@ -27,9 +27,10 @@ npm run start -> will start server for client side on: http://localhost:3000
 
 #### Frontend:
 
-- React CLI version 18 and TypeScript
-- SASS for style
-- Regex for data validation
+- React CLI version 18+ with TypeScript
+- SASS and MaterialUI for style
+- Context APi as state management
+- React Router Dom v6.8 for routing system
 
 #### Backend:
 

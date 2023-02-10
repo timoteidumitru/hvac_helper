@@ -30,7 +30,7 @@ export default function Register() {
         if (result.user.email === sendData.email) {
           setErrors('Successfully create new account!');
           setTimeout(() => {
-            navigate('/');
+            navigate('/login');
           }, 1700);
         }
       })

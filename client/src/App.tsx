@@ -25,8 +25,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navbar />}>
-          <Route index element={<Home />} />
           {isUserLoggedIn && <Route path="dashboard" element={<Dashboard />} />}
+          <Route index element={<Home />} />
           <Route path="timesheet" element={<Timesheet />} />
           <Route path="order-list" element={<OrderList />} />
           <Route path="delivery-list" element={<DeliveryList />} />
