@@ -23,6 +23,10 @@ export const Schemas = {
     create: Joi.object<IUser>({
       email: Joi.string().email().required(),
       password: Joi.string().required()
+    }),
+    validate: Joi.object<IUser>({
+      email: Joi.string().email().required(),
+      password: Joi.string().required()
     })
   }
 };

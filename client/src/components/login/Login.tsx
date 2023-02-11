@@ -35,11 +35,13 @@ export default function Login() {
       })
         .then((res) => res.json())
         .then((result) => {
+          if (result.message) setErrors(true);
           if (result.email === sendData.email) {
             setErrors(false);
-            setLoginData(sendData);
+            setLoginData(result);
             localStorage.setItem('loginData', JSON.stringify(sendData));
             setTimeout(() => {
+              setErrors(false);
               navigate('/dashboard');
             }, 700);
           }

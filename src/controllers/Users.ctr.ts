@@ -1,5 +1,33 @@
 import { Request, Response } from 'express';
-import User from '../models/Users.model';
+import { User } from '../models/Users.model';
+import { Profile } from '../models/Profile.model';
+
+// get all profile data from server
+const getProfileData = async (req: Request, res: Response) => {
+  const userId = req.body.userId;
+
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ error: 'User not found' });
+      }
+
+      Profile.findOne({ user: user._id })
+        .then((profile) => {
+          if (!profile) {
+            return res.status(404).send({ error: 'Profile not found' });
+          }
+
+          res.send({ user, profile });
+        })
+        .catch((error) => {
+          res.send(error);
+        });
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+};
 
 // create new user to DB
 const createUser = async (req: Request, res: Response) => {
@@ -27,4 +55,4 @@ const loginUser = async (req: Request, res: Response) => {
   return res.send(foundUser);
 };
 
-export default { loginUser, createUser };
+export default { loginUser, createUser, getProfileData };
