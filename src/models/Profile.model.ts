@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { User, UserDocument } from './Users.model';
+import { UserDocument } from './Users.model';
 
 const profileSchema = new mongoose.Schema({
   user: {

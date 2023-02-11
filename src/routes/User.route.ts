@@ -1,6 +1,6 @@
 import express from 'express';
 import controller from '../controllers/Users.ctr';
-import { Schemas, ValidateJoi } from '../middleware/Joi';
+import { Schemas, ValidateJoi } from '../middleware/UserValidate';
 
 const router = express.Router();
 

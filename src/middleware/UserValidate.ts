@@ -1,6 +1,6 @@
 import Joi, { ObjectSchema } from 'joi';
 import { NextFunction, Request, Response } from 'express';
-import { IUser } from '../models/Users.model';
+import { UserDocument } from '../models/Users.model';
 import Logging from '../library/Logging';
 
 // validate date come from client
@@ -20,11 +20,11 @@ export const ValidateJoi = (schema: ObjectSchema) => {
 // data validation schema
 export const Schemas = {
   user: {
-    create: Joi.object<IUser>({
+    create: Joi.object<UserDocument>({
       email: Joi.string().email().required(),
       password: Joi.string().required()
     }),
-    validate: Joi.object<IUser>({
+    validate: Joi.object<UserDocument>({
       email: Joi.string().email().required(),
       password: Joi.string().required()
     })
