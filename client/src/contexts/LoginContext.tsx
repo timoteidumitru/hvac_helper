@@ -1,6 +1,7 @@
 import React, { createContext, useState } from 'react';
 
 interface LoginData {
+  _id: string;
   email: string;
   password: string;
 }
@@ -19,13 +20,13 @@ interface LoginContextData {
 export const LoginContext = createContext<LoginContextData>({
   errors: false,
   setErrors: () => {},
-  loginData: { email: '', password: '' },
+  loginData: { _id: '', email: '', password: '' },
   setLoginData: () => {}
 });
 
 export const LoginContextProvider: React.FC<Props> = ({ children }) => {
   const [errors, setErrors] = useState(false);
-  const [loginData, setLoginData] = useState<LoginData>({ email: '', password: '' });
+  const [loginData, setLoginData] = useState<LoginData>({ _id: '', email: '', password: '' });
   return (
     <LoginContext.Provider value={{ errors, setErrors, loginData, setLoginData }}>{children}</LoginContext.Provider>
   );

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { User } from '../models/Users.model';
 
-// create new user to DB
+// create new user
 const createUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ message: 'Username and password are required.' });
@@ -17,7 +17,7 @@ const createUser = async (req: Request, res: Response) => {
     .catch((error: any) => res.status(500).json({ message: error.message }));
 };
 
-// authenticate user to DB
+// authenticate the user
 const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ message: 'Username and password are required.' });

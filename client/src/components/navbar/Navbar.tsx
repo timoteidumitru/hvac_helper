@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './navbar.scss';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -22,7 +22,9 @@ import FactCheckIcon from '@mui/icons-material/FactCheck';
 import SettingsPowerIcon from '@mui/icons-material/SettingsPower';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import Avatar from '@material-ui/core/Avatar';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { ProfileContext } from '../../contexts/ProfileContext';
 
 const drawerWidth = 240;
 
@@ -75,6 +77,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function Navbar() {
+  const { profileData } = useContext(ProfileContext);
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
@@ -108,21 +111,26 @@ export default function Navbar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div">
+          <Typography variant="h6" component="div" sx={{ mr: 0, ...(open && { display: 'none' }) }}>
             <p style={{ textTransform: 'capitalize' }}>
               {window.location.pathname.replace('/', '').replace('-', ' ') == 'dashboard'
                 ? ''
                 : window.location.pathname.replace('/', '').replace('-', ' ')}{' '}
             </p>
           </Typography>
-          <IconButton
-            color="inherit"
-            edge="end"
-            onClick={handleLogOff}
-            sx={{ mr: 0, ...(open && { display: 'none' }) }}
-          >
-            <SettingsPowerIcon />
-          </IconButton>
+          {profileData ? (
+            `${profileData.name.split(' ')[0]} 
+            ${(<Avatar alt="Profile Picture" src="https://www.example.com/profile-picture.jpg" variant="rounded" />)}`
+          ) : (
+            <IconButton
+              color="inherit"
+              edge="end"
+              onClick={handleLogOff}
+              sx={{ mr: 0, ...(open && { display: 'none' }) }}
+            >
+              <SettingsPowerIcon />
+            </IconButton>
+          )}
         </Toolbar>
       </AppBar>
       <Drawer

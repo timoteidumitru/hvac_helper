@@ -39,7 +39,7 @@ export default function Login() {
           if (result.email === sendData.email) {
             setErrors(false);
             setLoginData(result);
-            localStorage.setItem('loginData', JSON.stringify(sendData));
+            localStorage.setItem('loginData', JSON.stringify(result));
             setTimeout(() => {
               setErrors(false);
               navigate('/dashboard');
