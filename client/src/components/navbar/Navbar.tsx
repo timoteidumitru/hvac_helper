@@ -22,7 +22,7 @@ import FactCheckIcon from '@mui/icons-material/FactCheck';
 import SettingsPowerIcon from '@mui/icons-material/SettingsPower';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import Avatar from '@material-ui/core/Avatar';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { ProfileContext } from '../../contexts/ProfileContext';
 
@@ -119,8 +119,10 @@ export default function Navbar() {
             </p>
           </Typography>
           {profileData ? (
-            `${profileData.name.split(' ')[0]} 
-            ${(<Avatar alt="Profile Picture" src="https://www.example.com/profile-picture.jpg" variant="rounded" />)}`
+            <div style={{ display: 'flex' }}>
+              {profileData.name.split(' ')[0]}&nbsp;
+              <AccountCircleIcon />
+            </div>
           ) : (
             <IconButton
               color="inherit"
