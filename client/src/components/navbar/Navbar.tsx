@@ -113,25 +113,21 @@ export default function Navbar() {
           </IconButton>
           <Typography variant="h6" component="div" sx={{ mr: 0, ...(open && { display: 'none' }) }}>
             <p style={{ textTransform: 'capitalize' }}>
-              {window.location.pathname.replace('/', '').replace('-', ' ') == 'dashboard'
+              {window.location.pathname.replace('/', '').replace('-', ' ') === 'dashboard'
                 ? ''
                 : window.location.pathname.replace('/', '').replace('-', ' ')}{' '}
             </p>
           </Typography>
-          {profileData ? (
+          {profileData.name ? (
             <div style={{ display: 'flex' }}>
               {profileData.name.split(' ')[0]}&nbsp;
               <AccountCircleIcon />
             </div>
           ) : (
-            <IconButton
-              color="inherit"
-              edge="end"
-              onClick={handleLogOff}
-              sx={{ mr: 0, ...(open && { display: 'none' }) }}
-            >
-              <SettingsPowerIcon />
-            </IconButton>
+            <Link to="/login" style={{ textDecoration: 'none', alignItems: 'center', display: 'flex', color: 'white' }}>
+              Login&nbsp;
+              <AccountCircleIcon />
+            </Link>
           )}
         </Toolbar>
       </AppBar>

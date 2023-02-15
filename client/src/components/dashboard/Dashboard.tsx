@@ -2,6 +2,7 @@ import './dashboard.scss';
 import { useEffect, useContext, useState } from 'react';
 import { ProfileContext } from '../../contexts/ProfileContext';
 import { LoginContext } from '../../contexts/LoginContext';
+import DatesCarousel from './DatesCarousel';
 
 interface Profile {
   user: string;
@@ -40,6 +41,7 @@ function Dashboard() {
 
   return (
     <div>
+      {/* <DatesCarousel /> */}
       {profile ? (
         <>
           <h2>{profile.name}</h2>

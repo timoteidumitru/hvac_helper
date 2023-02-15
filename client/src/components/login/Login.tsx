@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { LoginContext } from '../../contexts/LoginContext';
@@ -9,9 +9,20 @@ interface LoginData {
   password: string;
 }
 
-export default function Login() {
+interface Props {
+  // props interface
+}
+
+const Login: React.FC<Props> = () => {
   const navigate = useNavigate();
   const { errors, setErrors, setLoginData } = useContext(LoginContext);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputRef?.current) {
+      inputRef.current?.focus();
+    }
+  }, []);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -64,7 +75,7 @@ export default function Login() {
           <div className="login-bottom">
             <div className="login-email">
               <label htmlFor="email">Email: </label>
-              <input type="email" name="email" autoComplete="off" />
+              <input type="email" ref={inputRef} name="email" autoComplete="off" />
             </div>
             <div className="login-password">
               <label htmlFor="password">Password: </label>
@@ -79,4 +90,6 @@ export default function Login() {
       </div>
     </form>
   );
-}
+};
+
+export default Login;
