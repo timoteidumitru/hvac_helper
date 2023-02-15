@@ -3,6 +3,31 @@ import { User } from '../models/Users.model';
 import { Profile } from '../models/Profile.model';
 
 // create new profile info
+const updateProfile = async (req: Request, res: Response) => {
+  const userId = req.body.profileData.userId;
+  const profileData = req.body.profileData;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send({ error: 'User not found!' });
+    }
+
+    // Find the user's existing profile and update its properties
+    const profile = await Profile.findOneAndUpdate(
+      { user: user._id },
+      { $set: profileData },
+      { new: true, upsert: true }
+    );
+
+    res.send({ profile });
+  } catch (error) {
+    console.error(error);
+    res.send(error);
+  }
+};
+// create new profile info
 const createProfile = async (req: Request, res: Response) => {
   const userId = req.body.profileData.userId;
   const profileData = req.body.profileData;
@@ -59,4 +84,4 @@ const getProfileData = async (req: Request, res: Response) => {
     });
 };
 
-export default { createProfile, getProfileData };
+export default { updateProfile, createProfile, getProfileData };
