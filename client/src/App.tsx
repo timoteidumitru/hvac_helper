@@ -27,24 +27,26 @@ function App() {
   }, []);
 
   return (
-    <ProfileContextProvider>
-      <Routes>
-        <Route path="/" element={<Navbar />}>
-          <Route path="" index element={<Home />} />
-          {isUserLoggedIn ? (
-            <Route path="dashboard" element={<Dashboard />} />
-          ) : (
+    <div style={{ maxWidth: '500px', margin: '0 auto', overflow: 'hidden' }}>
+      <ProfileContextProvider>
+        <Routes>
+          <Route path="/" element={<Navbar />}>
             <Route path="" index element={<Home />} />
-          )}
-          <Route path="timesheet" element={<Timesheet />} />
-          <Route path="order-list" element={<OrderList />} />
-          <Route path="delivery-list" element={<DeliveryList />} />
-        </Route>
-        <Route path="*" element={<Home />} />
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-      </Routes>
-    </ProfileContextProvider>
+            {isUserLoggedIn ? (
+              <Route path="dashboard" element={<Dashboard />} />
+            ) : (
+              <Route path="" index element={<Home />} />
+            )}
+            <Route path="timesheet" element={<Timesheet />} />
+            <Route path="order-list" element={<OrderList />} />
+            <Route path="delivery-list" element={<DeliveryList />} />
+          </Route>
+          <Route path="*" element={<Home />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+        </Routes>
+      </ProfileContextProvider>
+    </div>
   );
 }
 

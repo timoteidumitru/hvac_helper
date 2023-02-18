@@ -25,7 +25,6 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { ProfileContext } from '../../contexts/ProfileContext';
-import { LoginContext } from '../../contexts/LoginContext';
 
 const drawerWidth = 240;
 
@@ -78,7 +77,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function Navbar() {
-  const { loginData } = useContext(LoginContext);
   const { profileData } = useContext(ProfileContext);
   const isUserLoggedIn: string | null = localStorage.getItem('loginData');
   const theme = useTheme();
@@ -101,7 +99,7 @@ export default function Navbar() {
     }, 400);
   };
   return (
-    <Box sx={{ display: 'flex', backgroundColor: 'white', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', backgroundColor: 'white' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -110,7 +108,7 @@ export default function Navbar() {
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
-            sx={{ mr: 2, ...(open && { display: 'none' }) }}
+            sx={{ ...(open && { display: 'none' }) }}
           >
             <MenuIcon />
           </IconButton>
@@ -206,7 +204,10 @@ export default function Navbar() {
       <Main
         open={false}
         onClick={handleDrawerClose}
-        sx={{ padding: '0', ...(open && { backgroundColor: 'rgba(0,0,0, 0.66)' }) }}
+        sx={{
+          padding: '0',
+          ...(open && { backgroundColor: 'rgba(0,0,0, 0.66)' })
+        }}
       >
         <DrawerHeader />
         <Outlet />

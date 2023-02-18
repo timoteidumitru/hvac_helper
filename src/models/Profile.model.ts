@@ -9,7 +9,6 @@ const profileSchema = new mongoose.Schema({
   name: String,
   phone: Number,
   role: String,
-  rate: String,
   bankAcc: Number,
   sortCode: Number,
   utr: Number,
@@ -21,7 +20,6 @@ export interface ProfileDocument extends mongoose.Document {
   name: string;
   phone: number;
   role: string;
-  rate: number;
   bankAcc: number;
   sortCode: number;
   utr: number;
