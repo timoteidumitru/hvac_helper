@@ -3,12 +3,13 @@ import React, { createContext, useState } from 'react';
 interface ProfileData {
   userId: string;
   name: string;
-  phone: number;
+  phone: string;
+  email: string;
   role: string;
-  bankAcc: number;
-  sortCode: number;
-  utr: number;
   nextOfKin: string;
+  bankAcc: string;
+  utr: string;
+  rate: string;
 }
 
 interface Props {
@@ -25,7 +26,7 @@ interface ProfileContextData {
 export const ProfileContext = createContext<ProfileContextData>({
   errors: false,
   setErrors: () => {},
-  profileData: { userId: '', name: '', phone: 0, role: '', bankAcc: 0, sortCode: 0, utr: 0, nextOfKin: '' },
+  profileData: { userId: '', name: '', phone: '', role: '', email: '', bankAcc: '', utr: '', nextOfKin: '', rate: '' },
   setProfileData: () => {}
 });
 
@@ -34,12 +35,13 @@ export const ProfileContextProvider: React.FC<Props> = ({ children }) => {
   const [profileData, setProfileData] = useState<ProfileData>({
     userId: '',
     name: '',
-    phone: 0,
+    phone: '',
+    email: '',
     role: '',
-    bankAcc: 0,
-    sortCode: 0,
-    utr: 0,
-    nextOfKin: ''
+    bankAcc: '',
+    utr: '',
+    nextOfKin: '',
+    rate: ''
   });
   return (
     <ProfileContext.Provider value={{ errors, setErrors, profileData, setProfileData }}>

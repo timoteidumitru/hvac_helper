@@ -7,23 +7,25 @@ const profileSchema = new mongoose.Schema({
     ref: 'User'
   },
   name: String,
-  phone: Number,
+  phone: String,
+  email: String,
   role: String,
-  bankAcc: Number,
-  sortCode: Number,
-  utr: Number,
-  nextOfKin: String
+  nextOfKin: String,
+  bankAcc: String,
+  utr: String,
+  rate: String
 });
 
 export interface ProfileDocument extends mongoose.Document {
   user: UserDocument['_id'];
   name: string;
-  phone: number;
+  phone: string;
+  email: String;
   role: string;
-  bankAcc: number;
-  sortCode: number;
-  utr: number;
   nextOfKin: string;
+  bankAcc: string;
+  utr: string;
+  rate: string;
 }
 
 export const Profile = mongoose.model<ProfileDocument>('Profile', profileSchema);
