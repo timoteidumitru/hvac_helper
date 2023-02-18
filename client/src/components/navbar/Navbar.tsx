@@ -200,7 +200,11 @@ export default function Navbar() {
           </ListItem>
         </List>
       </Drawer>
-      <Main open={false} onClick={handleDrawerClose} sx={{ ...(open && { backgroundColor: 'rgba(0,0,0, 0.66)' }) }}>
+      <Main
+        open={false}
+        onClick={handleDrawerClose}
+        sx={{ padding: '0', ...(open && { backgroundColor: 'rgba(0,0,0, 0.66)' }) }}
+      >
         <DrawerHeader />
         <Outlet />
       </Main>

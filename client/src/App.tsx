@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import Login from './components/login/Login';
 import Register from './components/register/Register';
 import Dashboard from './components/dashboard/Dashboard';
@@ -14,30 +14,33 @@ import { ProfileContextProvider } from './contexts/ProfileContext';
 function App() {
   const { loginData, setLoginData } = useContext(LoginContext);
   const isUserLoggedIn = Object.values(loginData).every((value) => value !== '');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const savedLoginData = localStorage.getItem('loginData');
     if (savedLoginData) {
       setLoginData(JSON.parse(savedLoginData));
+      navigate('/dashboard');
     }
   }, []);
 
   return (
     <ProfileContextProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navbar />}>
-            {isUserLoggedIn && <Route path="dashboard" element={<Dashboard />} />}
-            <Route index element={<Home />} />
-            <Route path="timesheet" element={<Timesheet />} />
-            <Route path="order-list" element={<OrderList />} />
-            <Route path="delivery-list" element={<DeliveryList />} />
-            <Route path="*" element={<Home />} />
-          </Route>
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-        </Routes>
-      </BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navbar />}>
+          {isUserLoggedIn ? (
+            <Route path="dashboard" element={<Dashboard />} />
+          ) : (
+            <Route path="dashboard" element={<Home />} />
+          )}
+          <Route path="timesheet" element={<Timesheet />} />
+          <Route path="order-list" element={<OrderList />} />
+          <Route path="delivery-list" element={<DeliveryList />} />
+        </Route>
+        <Route path="*" element={<Home />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+      </Routes>
     </ProfileContextProvider>
   );
 }

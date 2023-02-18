@@ -2,7 +2,21 @@ import './dashboard.scss';
 import { useEffect, useContext, useState } from 'react';
 import { ProfileContext } from '../../contexts/ProfileContext';
 import { LoginContext } from '../../contexts/LoginContext';
-import DatesCarousel from './DatesCarousel';
+import Avatar from '@mui/material/Avatar';
+import Stack from '@mui/material/Stack';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { blue, lightBlue } from '@mui/material/colors';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: blue[500]
+    },
+    secondary: {
+      main: lightBlue[500]
+    }
+  }
+});
 
 interface Profile {
   user: string;
@@ -10,7 +24,7 @@ interface Profile {
   location: string;
 }
 
-function Dashboard() {
+export default function Dashboard() {
   const { setProfileData } = useContext(ProfileContext);
   const { loginData } = useContext(LoginContext);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -40,18 +54,10 @@ function Dashboard() {
   }, []);
 
   return (
-    <div>
-      {/* <DatesCarousel /> */}
-      {profile ? (
-        <>
-          <h2>{profile.name}</h2>
-          <p>{profile.location}</p>
-        </>
-      ) : (
-        <p>Loading...</p>
-      )}
-    </div>
+    <ThemeProvider theme={theme}>
+      <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-around', backgroundColor: 'secondary' }}>
+        <Avatar alt="User Avatar" sx={{ width: 100, height: 100 }} />
+      </Stack>
+    </ThemeProvider>
   );
 }
-
-export default Dashboard;
