@@ -25,6 +25,7 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { ProfileContext } from '../../contexts/ProfileContext';
+import { LoginContext } from '../../contexts/LoginContext';
 
 const drawerWidth = 240;
 
@@ -77,7 +78,9 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function Navbar() {
+  const { loginData } = useContext(LoginContext);
   const { profileData } = useContext(ProfileContext);
+  const isUserLoggedIn: string | null = localStorage.getItem('loginData');
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
@@ -94,9 +97,9 @@ export default function Navbar() {
     localStorage.removeItem('loginData');
     setTimeout(() => {
       navigate('/');
-    }, 700);
+      setOpen(false);
+    }, 400);
   };
-
   return (
     <Box sx={{ display: 'flex', backgroundColor: 'white', minHeight: '100vh' }}>
       <CssBaseline />
@@ -118,7 +121,7 @@ export default function Navbar() {
                 : window.location.pathname.replace('/', '').replace('-', ' ')}{' '}
             </p>
           </Typography>
-          {profileData.name ? (
+          {isUserLoggedIn ? (
             <div style={{ display: 'flex' }}>
               {profileData.name.split(' ')[0]}&nbsp;
               <AccountCircleIcon />

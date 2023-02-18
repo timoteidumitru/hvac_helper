@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Login from './components/login/Login';
 import Register from './components/register/Register';
 import Dashboard from './components/dashboard/Dashboard';
@@ -21,6 +21,8 @@ function App() {
     if (savedLoginData) {
       setLoginData(JSON.parse(savedLoginData));
       navigate('/dashboard');
+    } else {
+      navigate('/');
     }
   }, []);
 
@@ -28,10 +30,11 @@ function App() {
     <ProfileContextProvider>
       <Routes>
         <Route path="/" element={<Navbar />}>
+          <Route path="" index element={<Home />} />
           {isUserLoggedIn ? (
             <Route path="dashboard" element={<Dashboard />} />
           ) : (
-            <Route path="dashboard" element={<Home />} />
+            <Route path="" index element={<Home />} />
           )}
           <Route path="timesheet" element={<Timesheet />} />
           <Route path="order-list" element={<OrderList />} />
