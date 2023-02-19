@@ -1,5 +1,5 @@
 import './dashboard.scss';
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { ProfileContext } from '../../contexts/ProfileContext';
 import { LoginContext } from '../../contexts/LoginContext';
 import Avatar from '@mui/material/Avatar';
@@ -17,6 +17,7 @@ import PaidIcon from '@mui/icons-material/Paid';
 export default function Dashboard() {
   const { profileData, setProfileData } = useContext(ProfileContext);
   const { loginData } = useContext(LoginContext);
+  const [updateData, setUpdateData] = useState(profileData);
   const userId = { userId: loginData._id };
 
   useEffect(() => {
@@ -40,9 +41,20 @@ export default function Dashboard() {
         console.log(error);
       });
   }, []);
-  console.log(profileData);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('Clicked:', event.target.value);
+    const { name, value } = event.target;
+    setUpdateData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setProfileData(updateData);
+  };
+  console.log(profileData.address);
   return (
-    <>
+    <form onSubmit={handleSubmit}>
       <Container sx={{ backgroundColor: '#1976d2', color: 'white', minHeight: '100vh', padding: '0' }}>
         <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-around', padding: '1em' }}>
           <Avatar alt="User Avatar" sx={{ width: 100, height: 100 }} />
@@ -60,9 +72,8 @@ export default function Dashboard() {
             <Box sx={{ display: 'flex', alignItems: 'flex-end', width: '100%' }}>
               <BusinessIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
               <TextField
-                label="Address: "
-                variant="standard"
-                sx={{ width: '85%' }}
+                value={profileData?.address}
+                onChange={handleChange}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
@@ -70,6 +81,9 @@ export default function Dashboard() {
                     </InputAdornment>
                   )
                 }}
+                label="Address: "
+                variant="standard"
+                sx={{ width: '85%' }}
               />
             </Box>
           </Box>
@@ -77,9 +91,7 @@ export default function Dashboard() {
             <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
               <ContactPhoneIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
               <TextField
-                label="Phone: "
-                variant="standard"
-                sx={{ width: '90%' }}
+                value={profileData?.phone}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
@@ -87,6 +99,9 @@ export default function Dashboard() {
                     </InputAdornment>
                   )
                 }}
+                label="Phone: "
+                variant="standard"
+                sx={{ width: '90%' }}
               />
             </Box>
           </Box>
@@ -94,6 +109,7 @@ export default function Dashboard() {
             <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
               <AlternateEmailIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
               <TextField
+                value={profileData?.email}
                 label="Email: "
                 InputProps={{
                   endAdornment: (
@@ -111,7 +127,7 @@ export default function Dashboard() {
             <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
               <PeopleOutlineIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
               <TextField
-                style={{ width: '10em' }}
+                value={profileData?.nextOfKin?.name}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
@@ -119,10 +135,12 @@ export default function Dashboard() {
                     </InputAdornment>
                   )
                 }}
+                style={{ width: '10em' }}
                 label="NextOfKin: "
                 variant="standard"
               />
               <TextField
+                value={profileData?.nextOfKin?.phone}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
@@ -139,7 +157,7 @@ export default function Dashboard() {
             <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
               <AccountBalanceIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
               <TextField
-                style={{ width: '10em' }}
+                value={profileData?.bankAcc?.sort}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
@@ -147,10 +165,12 @@ export default function Dashboard() {
                     </InputAdornment>
                   )
                 }}
+                style={{ width: '10em' }}
                 label="Sort Code: "
                 variant="standard"
               />
               <TextField
+                value={profileData?.bankAcc?.account}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
@@ -167,6 +187,7 @@ export default function Dashboard() {
             <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
               <AssuredWorkloadIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
               <TextField
+                value={profileData?.utr}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
@@ -184,6 +205,7 @@ export default function Dashboard() {
             <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
               <PaidIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
               <TextField
+                value={profileData?.rate}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
@@ -199,6 +221,6 @@ export default function Dashboard() {
           </Box>
         </Stack>
       </Container>
-    </>
+    </form>
   );
 }

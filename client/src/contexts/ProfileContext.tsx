@@ -1,15 +1,16 @@
 import React, { createContext, useState } from 'react';
 
-interface ProfileData {
+export interface ProfileData {
   userId: string;
   name: string;
-  phone: string;
+  phone: number;
   email: string;
   role: string;
-  nextOfKin: string;
-  bankAcc: string;
-  utr: string;
-  rate: string;
+  address: string;
+  nextOfKin: { name: string; phone: number };
+  bankAcc: { name: string; sort: number; account: number };
+  utr: number;
+  rate: number;
 }
 
 interface Props {
@@ -26,7 +27,18 @@ interface ProfileContextData {
 export const ProfileContext = createContext<ProfileContextData>({
   errors: false,
   setErrors: () => {},
-  profileData: { userId: '', name: '', phone: '', role: '', email: '', bankAcc: '', utr: '', nextOfKin: '', rate: '' },
+  profileData: {
+    userId: '',
+    name: '',
+    phone: 0,
+    email: '',
+    address: '',
+    role: '',
+    nextOfKin: { name: '', phone: 0 },
+    bankAcc: { name: '', sort: 0, account: 0 },
+    utr: 0,
+    rate: 0
+  },
   setProfileData: () => {}
 });
 
@@ -35,13 +47,14 @@ export const ProfileContextProvider: React.FC<Props> = ({ children }) => {
   const [profileData, setProfileData] = useState<ProfileData>({
     userId: '',
     name: '',
-    phone: '',
+    phone: 0,
     email: '',
+    address: '',
     role: '',
-    bankAcc: '',
-    utr: '',
-    nextOfKin: '',
-    rate: ''
+    nextOfKin: { name: '', phone: 0 },
+    bankAcc: { name: '', sort: 0, account: 0 },
+    utr: 0,
+    rate: 0
   });
   return (
     <ProfileContext.Provider value={{ errors, setErrors, profileData, setProfileData }}>

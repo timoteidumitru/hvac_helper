@@ -23,13 +23,13 @@ export const Schemas = {
     create: Joi.object<ProfileDocument>({
       user: Joi.string().required(),
       name: Joi.string().required(),
-      phone: Joi.string().required(),
+      phone: Joi.number().required(),
+      address: Joi.string().required(),
       role: Joi.string().required(),
-      rate: Joi.number().required(),
-      bankAcc: Joi.number().required(),
-      sortCode: Joi.number().required(),
+      nextOfKin: Joi.object(),
+      bankAcc: Joi.object(),
       utr: Joi.number().required(),
-      nextOfKin: Joi.string().required()
+      rate: Joi.number().required()
     })
   }
 };
