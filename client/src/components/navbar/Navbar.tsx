@@ -77,7 +77,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function Navbar() {
-  const { profileData } = useContext(ProfileContext);
+  const { profileData, showProfile, setShowProfile } = useContext(ProfileContext);
   const isUserLoggedIn: string | null = localStorage.getItem('loginData');
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -120,7 +120,7 @@ export default function Navbar() {
             </p>
           </Typography>
           {isUserLoggedIn ? (
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex' }} onClick={() => setShowProfile(!showProfile)}>
               {profileData.name.split(' ')[0]}&nbsp;
               <AccountCircleIcon />
             </div>

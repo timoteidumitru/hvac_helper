@@ -19,14 +19,18 @@ interface Props {
 
 interface ProfileContextData {
   errors: boolean;
+  showProfile: boolean;
   setErrors: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowProfile: React.Dispatch<React.SetStateAction<boolean>>;
   profileData: ProfileData;
   setProfileData: React.Dispatch<React.SetStateAction<ProfileData>>;
 }
 
 export const ProfileContext = createContext<ProfileContextData>({
   errors: false,
+  showProfile: false,
   setErrors: () => {},
+  setShowProfile: () => {},
   profileData: {
     userId: '',
     name: '',
@@ -44,6 +48,7 @@ export const ProfileContext = createContext<ProfileContextData>({
 
 export const ProfileContextProvider: React.FC<Props> = ({ children }) => {
   const [errors, setErrors] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData>({
     userId: '',
     name: '',
@@ -57,7 +62,7 @@ export const ProfileContextProvider: React.FC<Props> = ({ children }) => {
     rate: 0
   });
   return (
-    <ProfileContext.Provider value={{ errors, setErrors, profileData, setProfileData }}>
+    <ProfileContext.Provider value={{ errors, setErrors, profileData, setProfileData, showProfile, setShowProfile }}>
       {children}
     </ProfileContext.Provider>
   );
