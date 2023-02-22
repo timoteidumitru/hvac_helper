@@ -1,22 +1,15 @@
 {
   "name": "hvac_api",
+  "author": "Timotei Dumitru",
   "version": "1.0.0",
+  "license": "MIT",
   "description": "",
   "main": "src/server.ts",
   "scripts": {
     "start": "node build/server.js",
     "build": "tsc"
   },
-  "author": "",
-  "license": "MIT",
   "dependencies": {
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
-    "@material-ui/core": "^4.12.4",
-    "@material-ui/icons": "^4.11.3",
-    "@mui/icons-material": "^5.11.0",
-    "@mui/material": "^5.11.8",
-    "@types/material-ui": "^0.21.12",
     "chalk": "^4.1.2",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
