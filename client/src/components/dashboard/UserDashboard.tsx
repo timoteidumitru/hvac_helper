@@ -48,14 +48,14 @@ export default function UserDashboard(): JSX.Element {
           }}
         >
           <TabList onChange={handleChange} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <StyledTab label="Today" value="0" />
+            <StyledTab label="This Week" value="0" />
             <StyledTab label="2 Weeks" value="1" />
             <StyledTab label="One Month" value="2" />
             <StyledTab label="Last Year" value="3" />
           </TabList>
         </Box>
         <TabPanel sx={{ padding: 0 }} value="0">
-          Today
+          This Week
         </TabPanel>
         <TabPanel sx={{ padding: 0 }} value="1">
           <TwoWeeks startDate={new Date('02/13/2023')} />

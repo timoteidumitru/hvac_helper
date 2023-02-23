@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, TextField } from '@material-ui/core';
+import { Typography, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import CheckIcon from '@mui/icons-material/Check';
 
 type Day = {
   date: Date;
@@ -34,17 +35,28 @@ const TwoWeeks: React.FC<TwoWeeksProps> = ({ startDate }) => {
     setDays(newDays);
   }, [startDate]);
 
+  console.log(days);
+
   return (
     <div style={{ backgroundColor: 'white', color: 'black', padding: 0 }}>
-      <Typography variant="h6">Next Two Weeks</Typography>
-      {days.map((day) => (
-        <TextField
-          key={day.date.toISOString()}
-          label={`${day.dayOfWeek}, ${day.date.toLocaleDateString()}`}
-          fullWidth
-          margin="normal"
-        />
-      ))}
+      <Typography variant="h6">Last Two Weeks: </Typography>
+      {days.map((day, idx) =>
+        idx < 7 ? (
+          <ListItem key={day.date.toISOString()}>
+            <ListItemText primary={`${day.dayOfWeek}, ${day.date.toLocaleDateString()}`} disableTypography />
+            <ListItemIcon>
+              <CheckIcon />
+            </ListItemIcon>
+          </ListItem>
+        ) : (
+          <ListItem key={day.date.toISOString()}>
+            <ListItemText primary={`${day.dayOfWeek}, ${day.date.toLocaleDateString()}`} disableTypography />
+            <ListItemIcon>
+              <CheckIcon />
+            </ListItemIcon>
+          </ListItem>
+        )
+      )}
     </div>
   );
 };
