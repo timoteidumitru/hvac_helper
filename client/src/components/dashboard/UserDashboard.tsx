@@ -43,7 +43,8 @@ export default function UserDashboard(): JSX.Element {
             justifyContent: 'space-around',
             margin: '0 auto',
             alignItems: 'center',
-            display: 'flex'
+            display: 'flex',
+            width: '100%'
           }}
         >
           <TabList onChange={handleChange} sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -53,12 +54,18 @@ export default function UserDashboard(): JSX.Element {
             <StyledTab label="Last Year" value="3" />
           </TabList>
         </Box>
-        <TabPanel value="0">Today</TabPanel>
-        <TabPanel value="1">
+        <TabPanel sx={{ padding: 0 }} value="0">
+          Today
+        </TabPanel>
+        <TabPanel sx={{ padding: 0 }} value="1">
           <TwoWeeks startDate={new Date('02/13/2023')} />
         </TabPanel>
-        <TabPanel value="2">Last Month Pannel</TabPanel>
-        <TabPanel value="3">Last Year Pannel</TabPanel>
+        <TabPanel sx={{ padding: 0 }} value="2">
+          Last Month Pannel
+        </TabPanel>
+        <TabPanel sx={{ padding: 0 }} value="3">
+          Last Year Pannel
+        </TabPanel>
       </TabContext>
     </Box>
   );

@@ -35,7 +35,7 @@ const TwoWeeks: React.FC<TwoWeeksProps> = ({ startDate }) => {
   }, [startDate]);
 
   return (
-    <div>
+    <div style={{ backgroundColor: 'white', color: 'black', padding: 0 }}>
       <Typography variant="h6">Next Two Weeks</Typography>
       {days.map((day) => (
         <TextField
