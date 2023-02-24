@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import CheckIcon from '@mui/icons-material/Check';
+import Divider from '@mui/material/Divider';
 
 type Day = {
   date: Date;
@@ -35,27 +36,37 @@ const TwoWeeks: React.FC<TwoWeeksProps> = ({ startDate }) => {
     setDays(newDays);
   }, [startDate]);
 
-  console.log(days);
-
   return (
     <div style={{ backgroundColor: 'white', color: 'black', padding: 0 }}>
-      <Typography variant="h6">Last Two Weeks: </Typography>
-      {days.map((day, idx) =>
-        idx < 7 ? (
-          <ListItem key={day.date.toISOString()}>
-            <ListItemText primary={`${day.dayOfWeek}, ${day.date.toLocaleDateString()}`} disableTypography />
-            <ListItemIcon>
-              <CheckIcon />
-            </ListItemIcon>
-          </ListItem>
-        ) : (
-          <ListItem key={day.date.toISOString()}>
-            <ListItemText primary={`${day.dayOfWeek}, ${day.date.toLocaleDateString()}`} disableTypography />
-            <ListItemIcon>
-              <CheckIcon />
-            </ListItemIcon>
-          </ListItem>
-        )
+      <Typography style={{ fontSize: '1.4em', padding: '0.5em 0 0.1em 0.5em' }}>Week One: </Typography>
+      {days.map(
+        (day, idx) =>
+          idx < 7 && (
+            <div key={day.date.toISOString()}>
+              <ListItem>
+                <ListItemText primary={`${day.dayOfWeek}, ${day.date.toLocaleDateString()}`} disableTypography />
+                <ListItemIcon>
+                  <CheckIcon />
+                </ListItemIcon>
+              </ListItem>
+              <Divider />
+            </div>
+          )
+      )}
+      <Typography style={{ fontSize: '1.4em', padding: '0.5em 0 0.1em 0.5em' }}>Week Two: </Typography>
+      {days.map(
+        (day, idx) =>
+          idx > 6 && (
+            <div key={day.date.toISOString()}>
+              <ListItem>
+                <ListItemText primary={`${day.dayOfWeek}, ${day.date.toLocaleDateString()}`} disableTypography />
+                <ListItemIcon>
+                  <CheckIcon />
+                </ListItemIcon>
+              </ListItem>
+              <Divider />
+            </div>
+          )
       )}
     </div>
   );
