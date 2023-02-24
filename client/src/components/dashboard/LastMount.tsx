@@ -17,35 +17,34 @@ const getCurrentWeekRange = () => {
   return `${startFormatted} - ${endFormatted}`;
 };
 
-const ThisWeek: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
+const LastMount: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
   const progress = value / 72;
   const weekRange = getCurrentWeekRange();
 
   return (
     <Box style={{ textAlign: 'center', paddingTop: '1em', color: 'black' }}>
-      <Typography>Are you IN today?</Typography>
       <Box
         style={{
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-around',
-          margin: '1em',
-          fontSize: '1.02em'
+          margin: '1em'
         }}
       >
         <Button style={{ backgroundColor: 'red', color: 'white', padding: '0.4em 2.4em', fontWeight: '600' }}>
-          No
+          Off
         </Button>
         <Button
           style={{
             backgroundColor: 'green',
             color: 'white',
             padding: '0.4em 2.4em',
-            fontWeight: '600'
+            fontWeight: '600',
+            fontSize: '1.02em'
           }}
         >
-          Yes
+          In
         </Button>
       </Box>
       <Typography style={{ color: 'gray', paddingBottom: '1em' }}>Current Week: {weekRange}</Typography>
@@ -82,20 +81,28 @@ const ThisWeek: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
           borderRadius: '5px 5px 0 0'
         }}
       >
-        <Box width={'50%'}>
-          <Box>
+        <Box width={'33.3%'}>
+          <Box width={'50%'}>
             <Typography>Regular Hours</Typography>
           </Box>
-          <Box>
+          <Box width={'50%'}>
             <Typography>48</Typography>
           </Box>
         </Box>
-        <Box width={'50%'}>
-          <Box>
+        <Box width={'33.3%'}>
+          <Box width={'50%'}>
             <Typography>Overtime Hours</Typography>
           </Box>
-          <Box>
+          <Box width={'50%'}>
             <Typography>6</Typography>
+          </Box>
+        </Box>
+        <Box width={'33.3%'}>
+          <Box width={'50%'}>
+            <Typography>Total Hours</Typography>
+          </Box>
+          <Box width={'50%'}>
+            <Typography>57</Typography>
           </Box>
         </Box>
       </Box>
@@ -114,4 +121,4 @@ const ThisWeek: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
   );
 };
 
-export default ThisWeek;
+export default LastMount;

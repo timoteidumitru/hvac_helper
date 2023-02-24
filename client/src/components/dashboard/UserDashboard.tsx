@@ -7,6 +7,8 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import TwoWeeks from './TwoWeeks';
 import ThisWeek from './ThisWeek';
+import LastMount from './LastMount';
+import LastYear from './LastYear';
 
 const StyledTab = styled(Tab)(({ theme }: { theme: Theme }) => ({
   textTransform: 'capitalize',
@@ -55,17 +57,17 @@ export default function UserDashboard(): JSX.Element {
             <StyledTab label="Last Year" value="3" />
           </TabList>
         </Box>
-        <TabPanel sx={{ padding: 0, minHeight: '65vh', backgroundColor: 'white' }} value="0">
-          <ThisWeek value={58} color={'primary'} />
+        <TabPanel sx={{ padding: 0, minHeight: '60vh', backgroundColor: 'white' }} value="0">
+          <ThisWeek value={57} color={'primary'} />
         </TabPanel>
-        <TabPanel sx={{ padding: 0, minHeight: '40vh' }} value="1">
+        <TabPanel sx={{ padding: 0, minHeight: '60vh', backgroundColor: 'white' }} value="1">
           <TwoWeeks startDate={new Date('02/13/2023')} />
         </TabPanel>
-        <TabPanel sx={{ padding: 0, minHeight: '40vh' }} value="2">
-          Last Month Pannel
+        <TabPanel sx={{ padding: 0, minHeight: '60vh', backgroundColor: 'white' }} value="2">
+          <LastMount value={57} color={'primary'} />
         </TabPanel>
-        <TabPanel sx={{ padding: 0, minHeight: '40vh' }} value="3">
-          Last Year Pannel
+        <TabPanel sx={{ padding: 0, minHeight: '60vh', backgroundColor: 'white' }} value="3">
+          <LastYear value={57} color={'primary'} />
         </TabPanel>
       </TabContext>
     </Box>

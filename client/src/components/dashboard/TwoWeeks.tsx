@@ -38,7 +38,7 @@ const TwoWeeks: React.FC<TwoWeeksProps> = ({ startDate }) => {
 
   return (
     <div style={{ backgroundColor: 'white', color: 'black', padding: 0 }}>
-      <Typography style={{ fontSize: '1.4em', padding: '0.5em 0 0.1em 0.5em' }}>Week One: </Typography>
+      <Typography style={{ fontSize: '1.4em', padding: '0.5em 0 0.1em 0.5em' }}>Week One: 59hrs</Typography>
       {days.map(
         (day, idx) =>
           idx < 7 && (
@@ -53,7 +53,7 @@ const TwoWeeks: React.FC<TwoWeeksProps> = ({ startDate }) => {
             </div>
           )
       )}
-      <Typography style={{ fontSize: '1.4em', padding: '0.5em 0 0.1em 0.5em' }}>Week Two: </Typography>
+      <Typography style={{ fontSize: '1.4em', padding: '0.5em 0 0.1em 0.5em' }}>Week Two: 48hrs</Typography>
       {days.map(
         (day, idx) =>
           idx > 6 && (
