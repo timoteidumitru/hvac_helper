@@ -7,7 +7,7 @@ const profileSchema = new mongoose.Schema({
     ref: 'User'
   },
   userId: { type: String, required: true },
-  _id: { type: String, required: true },
+  _id: { type: String, required: true, immutable: true },
   name: { type: String, required: true },
   phone: { type: String, required: true },
   email: { type: String, required: true },

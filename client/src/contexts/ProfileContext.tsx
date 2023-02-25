@@ -7,11 +7,16 @@ export interface ProfileData {
   email: string;
   role: string;
   address: string;
-  nextOfKin: { name: string; phone: number };
-  bankAcc: { name: string; sort: number; account: number };
   utr: number;
   rate: number;
+  nextOfKin: { name: string; phone: number };
+  bankAcc: { name: string; sort: number; account: number };
+  [key: string]: string | number | NestedProfileData;
 }
+
+type NestedProfileData = {
+  [key: string]: string | number;
+};
 
 interface Props {
   children: React.ReactNode;

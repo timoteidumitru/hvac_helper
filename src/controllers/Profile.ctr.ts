@@ -21,7 +21,7 @@ const updateProfile = async (req: Request, res: Response) => {
       { new: true, upsert: true }
     );
 
-    res.send({ profile });
+    res.send(profile);
   } catch (error) {
     console.error(error);
     res.send(error);

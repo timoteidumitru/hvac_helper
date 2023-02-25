@@ -57,7 +57,7 @@ const ThisWeek: React.FC<MyCircularProgressProps> = ({ value }) => {
           value={progress * 100}
           style={{ transform: 'rotate(90deg)', color: value < 46 ? 'green' : value > 65 ? 'red' : 'orange' }}
           thickness={3}
-          size={140}
+          size={120}
         />
         <Typography
           variant="h6"
@@ -71,12 +71,6 @@ const ThisWeek: React.FC<MyCircularProgressProps> = ({ value }) => {
           <span style={{ color: value < 46 ? 'green' : value > 65 ? 'red' : 'orange', fontWeight: '600' }}>
             {value}h
           </span>{' '}
-          <br />
-          <span style={{ color: value < 46 ? 'green' : value > 65 ? 'red' : 'orange', fontWeight: '600' }}>
-            of
-          </span>{' '}
-          <br />
-          <span style={{ color: value < 46 ? 'green' : value > 65 ? 'red' : 'orange', fontWeight: '600' }}>72hrs</span>
         </Typography>
       </Box>
       <Box

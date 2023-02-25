@@ -41,7 +41,7 @@ export default function Dashboard() {
         <Avatar alt="User Avatar" sx={{ width: 100, height: 100 }} />
       </Stack>
       <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-around' }}>
-        <Typography>{profileData.name}</Typography>
+        <Typography>{profileData?.name}</Typography>
       </Stack>
       <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-around', paddingBottom: '1em' }}>
         <Typography sx={{ textTransform: 'capitalize' }}>{profileData.role}</Typography>
