@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Typography, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import CheckIcon from '@mui/icons-material/Check';
 import Divider from '@mui/material/Divider';
+import { Stack } from '@mui/system';
 
 type Day = {
   date: Date;
@@ -37,7 +38,7 @@ const TwoWeeks: React.FC<TwoWeeksProps> = ({ startDate }) => {
   }, [startDate]);
 
   return (
-    <div style={{ backgroundColor: 'white', color: 'black', padding: 0 }}>
+    <Stack style={{ backgroundColor: 'white', color: 'black', width: '100%' }}>
       <Typography style={{ fontSize: '1.4em', padding: '0.5em 0 0.1em 0.5em' }}>Week One: 59hrs</Typography>
       {days.map(
         (day, idx) =>
@@ -68,7 +69,7 @@ const TwoWeeks: React.FC<TwoWeeksProps> = ({ startDate }) => {
             </div>
           )
       )}
-    </div>
+    </Stack>
   );
 };
 

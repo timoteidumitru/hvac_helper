@@ -7,24 +7,19 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import TwoWeeks from './TwoWeeks';
 import ThisWeek from './ThisWeek';
-import LastMount from './LastMount';
+import LastMount from './LastMonth';
 import LastYear from './LastYear';
 
 const StyledTab = styled(Tab)(({ theme }: { theme: Theme }) => ({
   textTransform: 'capitalize',
-  minWidth: 0,
   marginRight: theme.spacing(1),
   fontWeight: 500,
-  padding: '0.1em',
-  borderRight: '3px solid black',
+  padding: '0.2em',
   minHeight: '10px',
-  paddingRight: '0.4em',
-  '&:last-child': {
-    borderRight: 'none'
-  },
   color: 'white',
   '&.Mui-selected': {
-    borderBottom: '4px solid #00ff1f',
+    borderBottom: '3px solid #00ff1f',
+    borderRight: '3px solid #00ff1f',
     color: 'greenyellow'
   }
 }));
@@ -37,7 +32,7 @@ export default function UserDashboard(): JSX.Element {
   };
 
   return (
-    <Box sx={{ width: '100%', typography: 'body1' }}>
+    <Box sx={{ width: '100%' }}>
       <TabContext value={value}>
         <Box
           sx={{
@@ -50,7 +45,7 @@ export default function UserDashboard(): JSX.Element {
             width: '100%'
           }}
         >
-          <TabList onChange={handleChange} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <TabList onChange={handleChange} sx={{ display: 'flex', justifyContent: 'center' }}>
             <StyledTab label="This Week" value="0" />
             <StyledTab label="Two Weeks" value="1" />
             <StyledTab label="One Month" value="2" />
@@ -58,7 +53,7 @@ export default function UserDashboard(): JSX.Element {
           </TabList>
         </Box>
         <TabPanel sx={{ padding: 0, minHeight: '60vh', backgroundColor: 'white' }} value="0">
-          <ThisWeek value={57} color={'primary'} />
+          <ThisWeek value={57} />
         </TabPanel>
         <TabPanel sx={{ padding: 0, minHeight: '60vh', backgroundColor: 'white' }} value="1">
           <TwoWeeks startDate={new Date('02/13/2023')} />

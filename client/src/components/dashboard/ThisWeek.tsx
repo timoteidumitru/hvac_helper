@@ -1,11 +1,13 @@
 import React from 'react';
-import { Box, CircularProgress, CircularProgressProps, Typography } from '@material-ui/core';
+import { Box, CircularProgress, Typography } from '@material-ui/core';
 import { format } from 'date-fns';
 import { Button } from '@material-ui/core';
+import { Stack } from '@mui/material';
 
 type MyCircularProgressProps = {
-  value: number; // Progress value from 0 to 100
-} & CircularProgressProps;
+  value: number;
+  color?: string;
+};
 
 const getCurrentWeekRange = () => {
   const today = new Date();
@@ -17,12 +19,12 @@ const getCurrentWeekRange = () => {
   return `${startFormatted} - ${endFormatted}`;
 };
 
-const ThisWeek: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
+const ThisWeek: React.FC<MyCircularProgressProps> = ({ value }) => {
   const progress = value / 72;
   const weekRange = getCurrentWeekRange();
 
   return (
-    <Box style={{ textAlign: 'center', paddingTop: '1em', color: 'black' }}>
+    <Stack style={{ textAlign: 'center', paddingTop: '1em', color: 'black' }}>
       <Typography>Are you IN today?</Typography>
       <Box
         style={{
@@ -53,8 +55,7 @@ const ThisWeek: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
         <CircularProgress
           variant="determinate"
           value={progress * 100}
-          {...props}
-          style={{ transform: 'rotate(90deg)' }}
+          style={{ transform: 'rotate(90deg)', color: value < 46 ? 'green' : value > 65 ? 'red' : 'orange' }}
           thickness={3}
           size={140}
         />
@@ -67,9 +68,15 @@ const ThisWeek: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
             transform: 'translate(-50%, -50%)'
           }}
         >
-          <span style={{ color: 'green', fontWeight: '600' }}>{value}h</span> <br />
-          <span style={{ color: 'gray', fontWeight: '600' }}>of</span> <br />
-          <span style={{ color: 'black', fontWeight: '600' }}>72hrs</span>
+          <span style={{ color: value < 46 ? 'green' : value > 65 ? 'red' : 'orange', fontWeight: '600' }}>
+            {value}h
+          </span>{' '}
+          <br />
+          <span style={{ color: value < 46 ? 'green' : value > 65 ? 'red' : 'orange', fontWeight: '600' }}>
+            of
+          </span>{' '}
+          <br />
+          <span style={{ color: value < 46 ? 'green' : value > 65 ? 'red' : 'orange', fontWeight: '600' }}>72hrs</span>
         </Typography>
       </Box>
       <Box
@@ -110,7 +117,7 @@ const ThisWeek: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
       >
         <Typography>Total Hours: 57</Typography>
       </Box>
-    </Box>
+    </Stack>
   );
 };
 

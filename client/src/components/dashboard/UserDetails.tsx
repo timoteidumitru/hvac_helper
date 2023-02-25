@@ -13,7 +13,6 @@ import PaidIcon from '@mui/icons-material/Paid';
 
 export default function UserDetails() {
   const { profileData } = useContext(ProfileContext);
-  console.log(profileData);
 
   return (
     <Stack sx={{ backgroundColor: 'white', color: 'black', paddingBottom: '1em', marginBottom: '1em', width: '100%' }}>

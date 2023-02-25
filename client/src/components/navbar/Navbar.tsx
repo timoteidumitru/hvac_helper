@@ -120,7 +120,7 @@ export default function Navbar() {
             </p>
           </Typography>
           {isUserLoggedIn ? (
-            <div style={{ display: 'flex' }} onClick={() => setShowProfile(!showProfile)}>
+            <div style={{ display: 'flex', cursor: 'pointer' }} onClick={() => setShowProfile(!showProfile)}>
               {profileData.name.split(' ')[0]}&nbsp;
               <AccountCircleIcon />
             </div>

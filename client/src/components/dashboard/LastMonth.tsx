@@ -2,52 +2,35 @@ import React from 'react';
 import { Box, CircularProgress, CircularProgressProps, Typography } from '@material-ui/core';
 import { format } from 'date-fns';
 import { Button } from '@material-ui/core';
+import { Stack } from '@mui/material';
 
 type MyCircularProgressProps = {
   value: number; // Progress value from 0 to 100
 } & CircularProgressProps;
 
-const getCurrentWeekRange = () => {
-  const today = new Date();
-  const dayOfWeek = today.getDay();
-  const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - dayOfWeek + 1);
-  const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + (7 - dayOfWeek));
-  const startFormatted = format(startDate, 'dd MMM');
-  const endFormatted = format(endDate, 'dd MMM');
-  return `${startFormatted} - ${endFormatted}`;
-};
-
-const LastMount: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
+const LastMonth: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
   const progress = value / 72;
-  const weekRange = getCurrentWeekRange();
+  const today = new Date();
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+  const startDateString = startOfMonth.toLocaleDateString('en-UK', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short'
+  });
+
+  const endDateString = endOfMonth.toLocaleDateString('en-UK', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short'
+  });
+
+  const monthRangeString = `Current Month: ${startDateString} - ${endDateString}`;
 
   return (
-    <Box style={{ textAlign: 'center', paddingTop: '1em', color: 'black' }}>
-      <Box
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-around',
-          margin: '1em'
-        }}
-      >
-        <Button style={{ backgroundColor: 'red', color: 'white', padding: '0.4em 2.4em', fontWeight: '600' }}>
-          Off
-        </Button>
-        <Button
-          style={{
-            backgroundColor: 'green',
-            color: 'white',
-            padding: '0.4em 2.4em',
-            fontWeight: '600',
-            fontSize: '1.02em'
-          }}
-        >
-          In
-        </Button>
-      </Box>
-      <Typography style={{ color: 'gray', paddingBottom: '1em' }}>Current Week: {weekRange}</Typography>
+    <Stack style={{ textAlign: 'center', paddingTop: '1em', color: 'black' }}>
+      <Typography style={{ color: 'gray', paddingBottom: '1em' }}>{monthRangeString}</Typography>
       <Box style={{ position: 'relative', display: 'inline-block' }}>
         <CircularProgress
           variant="determinate"
@@ -81,28 +64,20 @@ const LastMount: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
           borderRadius: '5px 5px 0 0'
         }}
       >
-        <Box width={'33.3%'}>
-          <Box width={'50%'}>
+        <Box width={'50%'}>
+          <Box>
             <Typography>Regular Hours</Typography>
           </Box>
-          <Box width={'50%'}>
+          <Box>
             <Typography>48</Typography>
           </Box>
         </Box>
-        <Box width={'33.3%'}>
-          <Box width={'50%'}>
+        <Box width={'50%'}>
+          <Box>
             <Typography>Overtime Hours</Typography>
           </Box>
-          <Box width={'50%'}>
+          <Box>
             <Typography>6</Typography>
-          </Box>
-        </Box>
-        <Box width={'33.3%'}>
-          <Box width={'50%'}>
-            <Typography>Total Hours</Typography>
-          </Box>
-          <Box width={'50%'}>
-            <Typography>57</Typography>
           </Box>
         </Box>
       </Box>
@@ -117,8 +92,8 @@ const LastMount: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
       >
         <Typography>Total Hours: 57</Typography>
       </Box>
-    </Box>
+    </Stack>
   );
 };
 
-export default LastMount;
+export default LastMonth;
