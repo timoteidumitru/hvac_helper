@@ -12,9 +12,8 @@ import LastYear from './LastYear';
 
 const StyledTab = styled(Tab)(({ theme }: { theme: Theme }) => ({
   textTransform: 'capitalize',
-  marginRight: theme.spacing(1),
   fontWeight: 500,
-  padding: '0.2em',
+  padding: '0.2em 0',
   minHeight: '10px',
   color: 'white',
   '&.Mui-selected': {
@@ -36,7 +35,6 @@ export default function UserDashboard(): JSX.Element {
       <TabContext value={value}>
         <Box
           sx={{
-            borderBottom: 1,
             borderColor: 'divider',
             justifyContent: 'space-around',
             margin: '0 auto',

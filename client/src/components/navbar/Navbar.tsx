@@ -121,7 +121,7 @@ export default function Navbar() {
           </Typography>
           {isUserLoggedIn ? (
             <div style={{ display: 'flex', cursor: 'pointer' }} onClick={() => setShowProfile(!showProfile)}>
-              {profileData.name.split(' ')[0]}&nbsp;
+              {profileData?.name?.split(' ')[0]}&nbsp;
               <AccountCircleIcon />
             </div>
           ) : (

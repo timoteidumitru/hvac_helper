@@ -16,7 +16,6 @@ export default function Register() {
     } else {
       setErrors('Password does not match!');
     }
-    console.log("Data you've send to server: ", sendData);
     fetch('http://localhost:7079/user/register', {
       method: 'POST',
       headers: {
@@ -26,7 +25,6 @@ export default function Register() {
     })
       .then((res) => res.json())
       .then((result) => {
-        console.log('Response from server: ', result.user);
         if (result.user.email === sendData.email) {
           setErrors('Successfully create new account!');
           setTimeout(() => {

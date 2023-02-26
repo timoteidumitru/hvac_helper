@@ -14,7 +14,7 @@ export default function Dashboard() {
   const userId = { userId: loginData._id };
 
   useEffect(() => {
-    fetch('http://localhost:7079/profile', {
+    fetch('http://localhost:7079/profile/user', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -44,7 +44,7 @@ export default function Dashboard() {
         <Typography>{profileData?.name}</Typography>
       </Stack>
       <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-around', paddingBottom: '1em' }}>
-        <Typography sx={{ textTransform: 'capitalize' }}>{profileData.role}</Typography>
+        <Typography sx={{ textTransform: 'capitalize' }}>{profileData?.role}</Typography>
       </Stack>
       {showProfile ? <UserDetails /> : <UserDashboard />}
     </Container>

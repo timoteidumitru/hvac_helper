@@ -8,17 +8,17 @@ const profileSchema = new mongoose.Schema({
   },
   userId: { type: String, required: true },
   _id: { type: String, required: true, immutable: true },
-  name: { type: String, required: true },
+  name: { type: String },
   phone: { type: String, required: true },
   email: { type: String, required: true },
   address: { type: String, required: true },
-  role: { type: String, required: true },
+  role: { type: String },
   nextOfKin: {
     name: { type: String, required: true },
     phone: { type: String, required: true }
   },
   bankAcc: {
-    name: { type: String, required: true },
+    name: { type: String },
     sort: { type: Number, required: true },
     account: { type: Number, required: true }
   },

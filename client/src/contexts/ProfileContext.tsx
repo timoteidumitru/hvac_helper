@@ -1,4 +1,5 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
+import { LoginContext } from './LoginContext';
 
 export interface ProfileData {
   userId: string;
@@ -52,13 +53,14 @@ export const ProfileContext = createContext<ProfileContextData>({
 });
 
 export const ProfileContextProvider: React.FC<Props> = ({ children }) => {
+  const { loginData } = useContext(LoginContext);
   const [errors, setErrors] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData>({
-    userId: '',
+    userId: loginData._id,
     name: '',
     phone: 0,
-    email: '',
+    email: loginData.email,
     address: '',
     role: '',
     nextOfKin: { name: '', phone: 0 },

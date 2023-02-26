@@ -4,7 +4,7 @@ import { Profile } from '../models/Profile.model';
 
 // create new profile info
 const updateProfile = async (req: Request, res: Response) => {
-  const userId = req.body.profileData.userId;
+  const userId = req.body.userId;
   const profileData = req.body.profileData;
 
   try {
@@ -29,7 +29,7 @@ const updateProfile = async (req: Request, res: Response) => {
 };
 // create new profile info
 const createProfile = async (req: Request, res: Response) => {
-  const userId = req.body.profileData.userId;
+  const userId = req.body.userId;
   const profileData = req.body.profileData;
 
   User.findById(userId)
@@ -39,8 +39,7 @@ const createProfile = async (req: Request, res: Response) => {
       }
 
       const profile = new Profile({
-        ...profileData,
-        user: user._id
+        profileData
       });
 
       profile

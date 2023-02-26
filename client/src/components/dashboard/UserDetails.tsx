@@ -1,6 +1,6 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { ProfileContext } from '../../contexts/ProfileContext';
-import { Box, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Box, Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import CheckIcon from '@mui/icons-material/Check';
 import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
@@ -10,6 +10,9 @@ import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import PaidIcon from '@mui/icons-material/Paid';
+import PersonIcon from '@mui/icons-material/Person';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import { LoginContext } from '../../contexts/LoginContext';
 
 interface NestedProfileData {
   [key: string]: string | number;
@@ -17,7 +20,11 @@ interface NestedProfileData {
 
 export default function UserDetails() {
   const { profileData, setProfileData } = useContext(ProfileContext);
-  console.log(profileData);
+  const { loginData } = useContext(LoginContext);
+
+  useEffect(() => {
+    setProfileData((prev) => ({ ...prev, userId: loginData._id }));
+  }, []);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -40,11 +47,11 @@ export default function UserDetails() {
     event.preventDefault();
     try {
       const response = await fetch('http://localhost:7079/profile', {
-        method: 'PUT',
+        method: profileData.userId ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ profileData })
+        body: JSON.stringify({ userId: loginData._id, profileData })
       });
 
       if (!response.ok) {
@@ -52,7 +59,6 @@ export default function UserDetails() {
         throw new Error(error || 'An error occurred updating profile.');
       }
       const profile = await response.json();
-      console.log(profile);
       setProfileData(profile);
     } catch (error) {
       console.log(error);
@@ -66,11 +72,33 @@ export default function UserDetails() {
       >
         <Box sx={{ '& > :not(style)': { m: 1 } }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-end', width: '100%' }}>
+            <PersonIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+            <TextField
+              name="name"
+              onChange={handleInputChange}
+              value={profileData?.name ?? ''}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
+                    <IconButton type="submit">
+                      <CheckIcon style={{ cursor: 'pointer' }} />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+              label="Full Name: "
+              variant="standard"
+              sx={{ width: '85%' }}
+            />
+          </Box>
+        </Box>
+        <Box sx={{ '& > :not(style)': { m: 1 } }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-end', width: '100%' }}>
             <BusinessIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
             <TextField
               name="address"
               onChange={handleInputChange}
-              value={profileData?.address}
+              value={profileData?.address ?? ''}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
@@ -92,7 +120,7 @@ export default function UserDetails() {
             <TextField
               name="phone"
               onChange={handleInputChange}
-              value={profileData?.phone}
+              value={profileData?.phone ?? ''}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
@@ -114,7 +142,7 @@ export default function UserDetails() {
             <TextField
               name="email"
               onChange={handleInputChange}
-              value={profileData?.email}
+              value={profileData?.email ?? ''}
               label="Email: "
               InputProps={{
                 endAdornment: (
@@ -189,7 +217,7 @@ export default function UserDetails() {
               variant="standard"
             />
             <TextField
-              name="bancAcc.account"
+              name="bankAcc.account"
               onChange={handleNestedInputChange}
               value={profileData?.bankAcc?.account}
               InputProps={{
@@ -212,7 +240,7 @@ export default function UserDetails() {
             <TextField
               name="utr"
               onChange={handleInputChange}
-              value={profileData?.utr}
+              value={profileData?.utr ?? ''}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
@@ -230,11 +258,33 @@ export default function UserDetails() {
         </Box>
         <Box sx={{ '& > :not(style)': { m: 1 } }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+            <AssignmentIndIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+            <TextField
+              name="role"
+              onChange={handleInputChange}
+              value={profileData?.role ?? ''}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
+                    <IconButton type="submit">
+                      <CheckIcon style={{ cursor: 'pointer' }} />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+              label="Possition: "
+              variant="standard"
+              sx={{ width: '90%' }}
+            />
+          </Box>
+        </Box>
+        <Box sx={{ '& > :not(style)': { m: 1 } }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
             <PaidIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
             <TextField
               name="rate"
               onChange={handleInputChange}
-              value={profileData?.rate}
+              value={profileData?.rate ?? ''}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
@@ -250,6 +300,7 @@ export default function UserDetails() {
             />
           </Box>
         </Box>
+        {!profileData?.rate ? '' : <Button type="submit">Save</Button>}
       </Stack>
     </form>
   );
