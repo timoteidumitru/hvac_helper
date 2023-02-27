@@ -2,7 +2,8 @@ import React from 'react';
 import { Box, CircularProgress, Typography } from '@material-ui/core';
 import { format } from 'date-fns';
 import { Button } from '@material-ui/core';
-import { Stack } from '@mui/material';
+import { IconButton, InputAdornment, Stack, TextField } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
 
 const getCurrentWeekRange = () => {
   const today = new Date();
@@ -29,6 +30,7 @@ const ThisWeek = () => {
           alignItems: 'center',
           justifyContent: 'space-around',
           margin: '1em',
+          marginBottom: '0',
           fontSize: '1.02em'
         }}
       >
@@ -45,6 +47,27 @@ const ThisWeek = () => {
         >
           Yes
         </Button>
+      </Box>
+      <Box>
+        <TextField
+          name="overtime"
+          InputProps={{
+            style: { textAlign: 'center' },
+            endAdornment: (
+              <InputAdornment
+                position="end"
+                style={{ backgroundColor: 'transparent', padding: '0', paddingRight: '0' }}
+              >
+                <IconButton type="submit" style={{ padding: 0 }}>
+                  <CheckIcon style={{ cursor: 'pointer' }} />
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
+          label="Any overtime to add? "
+          variant="standard"
+          sx={{ width: '50%', marginBottom: '1em' }}
+        />
       </Box>
       <Typography style={{ color: 'gray', paddingBottom: '1em' }}>Current Week: {weekRange}</Typography>
       <Box style={{ position: 'relative', display: 'inline-block' }}>
