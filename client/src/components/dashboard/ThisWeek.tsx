@@ -4,11 +4,6 @@ import { format } from 'date-fns';
 import { Button } from '@material-ui/core';
 import { Stack } from '@mui/material';
 
-type MyCircularProgressProps = {
-  value: number;
-  color?: string;
-};
-
 const getCurrentWeekRange = () => {
   const today = new Date();
   const dayOfWeek = today.getDay();
@@ -19,7 +14,8 @@ const getCurrentWeekRange = () => {
   return `${startFormatted} - ${endFormatted}`;
 };
 
-const ThisWeek: React.FC<MyCircularProgressProps> = ({ value }) => {
+const ThisWeek = () => {
+  const value = 34;
   const progress = value / 72;
   const weekRange = getCurrentWeekRange();
 
@@ -55,7 +51,7 @@ const ThisWeek: React.FC<MyCircularProgressProps> = ({ value }) => {
         <CircularProgress
           variant="determinate"
           value={progress * 100}
-          style={{ transform: 'rotate(90deg)', color: value < 46 ? 'green' : value > 65 ? 'red' : 'orange' }}
+          style={{ transform: 'rotate(90deg)', color: value < 46 ? 'green' : value > 60 ? 'red' : 'orange' }}
           thickness={3}
           size={120}
         />
@@ -68,7 +64,7 @@ const ThisWeek: React.FC<MyCircularProgressProps> = ({ value }) => {
             transform: 'translate(-50%, -50%)'
           }}
         >
-          <span style={{ color: value < 46 ? 'green' : value > 65 ? 'red' : 'orange', fontWeight: '600' }}>
+          <span style={{ color: value < 46 ? 'green' : value > 60 ? 'red' : 'orange', fontWeight: '600' }}>
             {value}h
           </span>{' '}
         </Typography>
@@ -88,7 +84,7 @@ const ThisWeek: React.FC<MyCircularProgressProps> = ({ value }) => {
             <Typography>Regular Hours</Typography>
           </Box>
           <Box>
-            <Typography>48</Typography>
+            <Typography>27</Typography>
           </Box>
         </Box>
         <Box width={'50%'}>
@@ -96,7 +92,7 @@ const ThisWeek: React.FC<MyCircularProgressProps> = ({ value }) => {
             <Typography>Overtime Hours</Typography>
           </Box>
           <Box>
-            <Typography>6</Typography>
+            <Typography>5</Typography>
           </Box>
         </Box>
       </Box>
@@ -109,7 +105,7 @@ const ThisWeek: React.FC<MyCircularProgressProps> = ({ value }) => {
           paddingTop: '1em'
         }}
       >
-        <Typography>Total Hours: 57</Typography>
+        <Typography>Total Hours: {value}</Typography>
       </Box>
     </Stack>
   );

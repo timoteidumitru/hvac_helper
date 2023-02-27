@@ -51,16 +51,16 @@ export default function UserDashboard(): JSX.Element {
           </TabList>
         </Box>
         <TabPanel sx={{ padding: 0, minHeight: '60vh', backgroundColor: 'white' }} value="0">
-          <ThisWeek value={57} />
+          <ThisWeek />
         </TabPanel>
         <TabPanel sx={{ padding: 0, minHeight: '60vh', backgroundColor: 'white' }} value="1">
-          <TwoWeeks startDate={new Date('02/13/2023')} />
+          <TwoWeeks />
         </TabPanel>
         <TabPanel sx={{ padding: 0, minHeight: '60vh', backgroundColor: 'white' }} value="2">
-          <LastMount value={57} color={'primary'} />
+          <LastMount />
         </TabPanel>
         <TabPanel sx={{ padding: 0, minHeight: '60vh', backgroundColor: 'white' }} value="3">
-          <LastYear value={57} color={'primary'} />
+          <LastYear />
         </TabPanel>
       </TabContext>
     </Box>

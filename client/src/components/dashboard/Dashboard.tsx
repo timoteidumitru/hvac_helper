@@ -44,7 +44,9 @@ export default function Dashboard() {
         <Typography>{profileData?.name}</Typography>
       </Stack>
       <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-around', paddingBottom: '1em' }}>
-        <Typography sx={{ textTransform: 'capitalize' }}>{profileData?.role}</Typography>
+        <Typography sx={{ textTransform: 'capitalize', fontSize: '0.9em', fontStyle: 'italic' }}>
+          {profileData?.role}
+        </Typography>
       </Stack>
       {showProfile ? <UserDetails /> : <UserDashboard />}
     </Container>

@@ -1,32 +1,25 @@
 import React from 'react';
-import { Box, CircularProgress, CircularProgressProps, Typography } from '@material-ui/core';
-import { format } from 'date-fns';
-import { Button } from '@material-ui/core';
+import { Box, CircularProgress, Typography } from '@material-ui/core';
 import { Stack } from '@mui/material';
 
-type MyCircularProgressProps = {
-  value: number; // Progress value from 0 to 100
-} & CircularProgressProps;
+function getCurrentMonthDates() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const options: Intl.DateTimeFormatOptions = { weekday: 'short', day: 'numeric', month: 'short' };
+  const startDate = firstDay.toLocaleDateString('en-UK', options);
+  const endDate = lastDay.toLocaleDateString('en-UK', options);
+  return { startDate, endDate };
+}
 
-const LastMonth: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
-  const progress = value / 72;
-  const today = new Date();
-  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-  const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+const LastMonth = () => {
+  const value = 210;
+  const progress = value / 250;
+  const { startDate, endDate } = getCurrentMonthDates();
 
-  const startDateString = startOfMonth.toLocaleDateString('en-UK', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short'
-  });
-
-  const endDateString = endOfMonth.toLocaleDateString('en-UK', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short'
-  });
-
-  const monthRangeString = `Current Month: ${startDateString} - ${endDateString}`;
+  const monthRangeString = `Current Month: ${startDate} - ${endDate}`;
 
   return (
     <Stack style={{ textAlign: 'center', paddingTop: '1em', color: 'black' }}>
@@ -35,8 +28,7 @@ const LastMonth: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
         <CircularProgress
           variant="determinate"
           value={progress * 100}
-          {...props}
-          style={{ transform: 'rotate(90deg)' }}
+          style={{ transform: 'rotate(90deg)', color: value < 181 ? 'green' : value > 215 ? 'red' : 'orange' }}
           thickness={3}
           size={140}
         />
@@ -49,9 +41,9 @@ const LastMonth: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
             transform: 'translate(-50%, -50%)'
           }}
         >
-          <span style={{ color: 'green', fontWeight: '600' }}>{value}h</span> <br />
-          <span style={{ color: 'gray', fontWeight: '600' }}>of</span> <br />
-          <span style={{ color: 'black', fontWeight: '600' }}>72hrs</span>
+          <span style={{ fontWeight: '600', color: value < 181 ? 'green' : value > 215 ? 'red' : 'orange' }}>
+            {value}hrs
+          </span>
         </Typography>
       </Box>
       <Box
@@ -69,7 +61,7 @@ const LastMonth: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
             <Typography>Regular Hours</Typography>
           </Box>
           <Box>
-            <Typography>48</Typography>
+            <Typography>192</Typography>
           </Box>
         </Box>
         <Box width={'50%'}>
@@ -77,7 +69,7 @@ const LastMonth: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
             <Typography>Overtime Hours</Typography>
           </Box>
           <Box>
-            <Typography>6</Typography>
+            <Typography>12</Typography>
           </Box>
         </Box>
       </Box>
@@ -90,7 +82,7 @@ const LastMonth: React.FC<MyCircularProgressProps> = ({ value, ...props }) => {
           paddingTop: '1em'
         }}
       >
-        <Typography>Total Hours: 57</Typography>
+        <Typography>Total Hours: {value}</Typography>
       </Box>
     </Stack>
   );
