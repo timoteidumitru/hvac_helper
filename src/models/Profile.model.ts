@@ -6,8 +6,6 @@ const profileSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  userId: { type: String, required: true },
-  _id: { type: String, required: true, immutable: true },
   name: { type: String },
   phone: { type: String, required: true },
   email: { type: String, required: true },

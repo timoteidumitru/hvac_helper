@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { Box, CircularProgress, Typography } from '@material-ui/core';
 import { format } from 'date-fns';
 import { Button } from '@material-ui/core';
 import { IconButton, InputAdornment, Stack, TextField } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
+import { ProfileContext } from '../../contexts/ProfileContext';
 
 const getCurrentWeekRange = () => {
   const today = new Date();
@@ -16,9 +17,27 @@ const getCurrentWeekRange = () => {
 };
 
 const ThisWeek = () => {
+  const { profileData } = useContext(ProfileContext);
+  const [todayData, setTodayData] = useState({ today: { normalHours: 0, overtime: 0 } });
   const value = 34;
   const progress = value / 72;
   const weekRange = getCurrentWeekRange();
+  const profileID = profileData.userId;
+
+  function postTodayData() {
+    fetch('http://localhost:7079/timesheet/today', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ profileID, todayData })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Response:', data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
 
   return (
     <Stack style={{ textAlign: 'center', paddingTop: '1em', color: 'black' }}>
@@ -44,6 +63,7 @@ const ThisWeek = () => {
             padding: '0.4em 2.4em',
             fontWeight: '600'
           }}
+          onClick={postTodayData}
         >
           Yes
         </Button>
