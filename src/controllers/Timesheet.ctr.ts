@@ -4,81 +4,74 @@ import { Timesheet } from '../models/Timesheet.model';
 
 // update today's status
 const updateTimesheet = async (req: Request, res: Response) => {
-  const profileID = req.body.profile;
-  const profileData = req.body.todayData;
+  const { dayIndex, hoursWorked, overtime } = req.body.updateData;
+  const { timesheetID } = req.body;
 
   try {
-    const profileId = await Profile.findById(profileID);
+    const timesheet = await Timesheet.findById(timesheetID);
+    if (!timesheet) {
+      return res.status(404).send({ error: 'Timesheet not found!' });
+    }
 
-    if (!profileId) {
+    const day = timesheet.days[dayIndex];
+    if (!day) {
+      return res.status(404).send({ error: 'Day not found!' });
+    }
+
+    day.hoursWorked = hoursWorked;
+    day.overtime = overtime;
+
+    const updatedTimesheet = await timesheet.save();
+
+    res.send(updatedTimesheet);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: 'Server error!' });
+  }
+};
+
+// add today's status
+const pushTimesheet = async (req: Request, res: Response) => {
+  const { profileID, timesheetData } = req.body;
+
+  try {
+    const profile = await Profile.findById(profileID);
+    if (!profile) {
       return res.status(404).send({ error: 'Profile not found!' });
     }
 
-    // Find the profileId's existing profile and update its properties
-    const profile = await Timesheet.findOneAndUpdate(
-      { profileId: profileId._id },
-      { $set: profileData },
+    const timesheet = await Timesheet.findOneAndUpdate(
+      { profileID: profile._id },
+      { $push: { days: timesheetData } },
       { new: true, upsert: true }
     );
 
-    res.send(profile);
+    res.status(201).send(timesheet);
   } catch (error) {
     console.error(error);
-    res.send(error);
+    res.status(500).send({ error: 'Server error!' });
   }
 };
-// create new profile info
+
+// create new timesheet
 const createTimesheet = async (req: Request, res: Response) => {
   const profileID = req.body.profileID;
   const timesheetData = req.body.timesheetData;
 
-  Profile.findById(profileID)
-    .then((profile) => {
-      if (!profile) {
-        return res.status(404).send({ error: 'Profile not found..' });
-      }
+  try {
+    const profile = await Profile.findById(profileID);
+    if (!profile) {
+      return res.status(404).send({ error: 'Profile not found..' });
+    }
 
-      const timesheet = new Timesheet(timesheetData);
-
-      timesheet
-        .save()
-        .then((savedTimesheet) => {
-          res.send({ timesheet: savedTimesheet });
-        })
-        .catch((error) => {
-          res.send(error);
-        });
-    })
-    .catch((error) => {
-      res.send(error);
-    });
+    const timesheet = new Timesheet(timesheetData);
+    const period = timesheet?.days[0]?.period;
+    timesheet.profileID = profileID;
+    const savedTimesheet = await timesheet.save();
+    res.send({ savedTimesheet, period });
+  } catch (error) {
+    res.send(error);
+  }
 };
 
-// get profile data from server
-const getTimesheetData = async (req: Request, res: Response) => {
-  const userId = req.body.userId;
-
-  Profile.findById(userId)
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({ error: 'Profile not found' });
-      }
-
-      Timesheet.findOne({ user: user._id })
-        .then((profile) => {
-          if (!profile) {
-            return res.status(404).send({ error: 'Timesheet not found' });
-          }
-
-          res.send({ user, profile });
-        })
-        .catch((error) => {
-          res.send(error);
-        });
-    })
-    .catch((error) => {
-      res.send(error);
-    });
-};
-
-export default { updateTimesheet, createTimesheet };
+export default { pushTimesheet, createTimesheet, updateTimesheet };

@@ -9,6 +9,7 @@ import timesheetRoutes from './routes/Timesheet.route';
 
 const router = express();
 // Connect to Mongo
+mongoose.set('strictQuery', true);
 mongoose
   .connect(config.mongo.url, { retryWrites: true, w: 'majority' })
   .then(() => {
