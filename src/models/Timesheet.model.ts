@@ -2,7 +2,6 @@ import mongoose, { Schema, Document } from 'mongoose';
 import { ProfileDocument } from './Profile.model';
 
 export interface Day extends Document {
-  dueDate: string;
   date: string;
   hoursWorked: number;
   overtime: number;
@@ -18,7 +17,6 @@ export interface Timesheet extends Document {
 }
 
 const daySchema: Schema<Day> = new Schema({
-  dueDate: String,
   date: {
     type: String,
     validate: {
@@ -28,10 +26,13 @@ const daySchema: Schema<Day> = new Schema({
         if (!dateRegex.test(value)) {
           return false;
         }
-        const dueDay = new Date(this.dueDate);
+        const today = new Date();
+        const currentDay = today.getDay(); // 0 (Sunday) to 6 (Saturday)
+        const daysSinceLastMonday = currentDay === 1 ? 7 : currentDay - 1;
+        const lastMonday = new Date(today.getTime() - daysSinceLastMonday * 24 * 3600 * 1000 - 7 * 24 * 3600 * 1000);
         const [dd, mm, yyyy] = value.split('/');
         const date = new Date(`${yyyy}-${mm}-${dd}`);
-        const startDate = dueDay;
+        const startDate = lastMonday;
         const endDate = new Date(startDate.getTime());
         endDate.setDate(endDate.getDate() + 14);
         return date >= startDate && date <= endDate;

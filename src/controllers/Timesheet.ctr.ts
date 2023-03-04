@@ -48,7 +48,7 @@ const updateTimesheet = async (req: Request, res: Response) => {
 };
 
 // add today's status
-const pushTimesheet = async (req: Request, res: Response) => {
+const pushTodayTimesheet = async (req: Request, res: Response) => {
   const { profileID, timesheetData } = req.body;
 
   try {
@@ -57,16 +57,24 @@ const pushTimesheet = async (req: Request, res: Response) => {
       return res.status(404).send({ error: 'Profile not found!' });
     }
 
-    const timesheet = await Timesheet.findOneAndUpdate(
-      { profileID: profile._id },
-      { $push: { days: timesheetData } },
-      { new: true, upsert: true }
-    );
+    const timesheet = await Timesheet.findOne({ profileID: profile._id });
 
-    res.status(201).send(timesheet);
+    if (!timesheet) {
+      const newTimesheet = new Timesheet({
+        profileID: profile._id,
+        days: [timesheetData]
+      });
+      await newTimesheet.save();
+      res.status(201).send(newTimesheet);
+    } else {
+      timesheet.days.push(timesheetData);
+      timesheet.days.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      const updatedTimesheet = await timesheet.save();
+      res.status(201).send(updatedTimesheet);
+    }
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: 'Server error!' });
+    res.status(500).send({ error: 'Server error! Invalid Date Range!' });
   }
 };
 
@@ -89,4 +97,4 @@ const createTimesheet = async (req: Request, res: Response) => {
   }
 };
 
-export default { pushTimesheet, createTimesheet, updateTimesheet, getTimesheet };
+export default { pushTodayTimesheet, createTimesheet, updateTimesheet, getTimesheet };
