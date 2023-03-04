@@ -1,11 +1,11 @@
-import mongoose, { Schema, Document, Types } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 import { ProfileDocument } from './Profile.model';
 
 export interface Day extends Document {
+  dueDate: string;
   date: string;
   hoursWorked: number;
   overtime: number;
-  period: string;
 }
 
 export interface Timesheet extends Document {
@@ -14,50 +14,30 @@ export interface Timesheet extends Document {
   period: string;
   days: Day[];
   project: string;
-  comments?: string;
+  comments: string;
 }
 
 const daySchema: Schema<Day> = new Schema({
+  dueDate: String,
   date: {
     type: String,
     validate: {
-      validator: function (value: string): boolean {
+      validator: function (this: Day, value: string): boolean {
         // Ensure the date is within the current pay period and in the format DD/MM/YYYY
         const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
         if (!dateRegex.test(value)) {
           return false;
         }
+        const dueDay = new Date(this.dueDate);
         const [dd, mm, yyyy] = value.split('/');
         const date = new Date(`${yyyy}-${mm}-${dd}`);
-        const startDate = new Date('2023-02-16T00:00:00Z'); // Replace with your specific start date
+        const startDate = dueDay;
         const endDate = new Date(startDate.getTime());
         endDate.setDate(endDate.getDate() + 14);
         return date >= startDate && date <= endDate;
       },
       message: 'Date must be within the current pay period (past two weeks) and in the format DD/MM/YYYY'
     }
-  },
-  period: {
-    type: String,
-    get: function (this: Day): string {
-      const [dd, mm, yyyy] = this.date.split('/');
-      const date = new Date(`${yyyy}-${mm}-${dd}`);
-      const periodStart = new Date('2023-02-13T00:00:00Z'); // Replace with your specific start date
-      const periodEnd = new Date(periodStart.getTime());
-      periodEnd.setDate(periodEnd.getDate() + 13);
-      const periodStartFormatted = periodStart.toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-      const periodEndFormatted = periodEnd.toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-      return `${periodStartFormatted} - ${periodEndFormatted}`;
-    },
-    readonly: true
   },
   hoursWorked: {
     type: Number,
@@ -86,14 +66,15 @@ const timesheetSchema: Schema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Profile'
   },
+  days: [daySchema],
   dueDate: { type: String },
   period: {
     type: String,
     default: function (this: Timesheet): string {
       const [dd, mm, yyyy] = this.dueDate.split('/');
-      const payday = new Date(`${yyyy}-${mm}-${dd}`);
-      const start = new Date(payday.getTime() - 13 * 24 * 3600 * 1000);
-      const end = new Date(payday.getTime() - 0 * 24 * 3600 * 1000);
+      const dueDay = new Date(`${yyyy}-${mm}-${dd}`);
+      const start = new Date(dueDay.getTime() - 13 * 24 * 3600 * 1000);
+      const end = new Date(dueDay.getTime() - 0 * 24 * 3600 * 1000);
       const startFormatted = start.toLocaleDateString('en-UK', {
         day: '2-digit',
         month: '2-digit',
@@ -108,7 +89,6 @@ const timesheetSchema: Schema = new Schema({
     },
     readonly: true
   },
-  days: [daySchema],
   project: {
     type: String
   },

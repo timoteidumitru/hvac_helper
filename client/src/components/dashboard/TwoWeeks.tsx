@@ -1,69 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Typography, ListItem, ListItemIcon, ListItemText, Box, CircularProgress } from '@material-ui/core';
 import Divider from '@mui/material/Divider';
-import { format } from 'date-fns';
 import { Stack } from '@mui/system';
 
-type Day = {
-  date: Date;
-  dayOfWeek: string;
-};
-
-const getFirstWeekRange = () => {
-  const today = new Date();
-  const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 14);
-  const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 8);
-  const startFormatted = format(startDate, 'dd MMM');
-  const endFormatted = format(endDate, 'dd MMM');
-  return `${startFormatted} - ${endFormatted}`;
-};
-
-const getSecondtWeekRange = () => {
-  const today = new Date();
-  const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay() - 6);
-  const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
-  const startFormatted = format(startDate, 'dd MMM');
-  const endFormatted = format(endDate, 'dd MMM');
-  return `${startFormatted} - ${endFormatted}`;
-};
-
 const TwoWeeks = () => {
-  const [days, setDays] = useState<Day[]>([]);
-  const weekOne = getFirstWeekRange();
-  const weekTwo = getSecondtWeekRange();
   const value = 104;
   const progress = value / 150;
   const today = new Date();
-  const dayOfWeek = today.getDay();
-  const startPeriod = format(
-    new Date(today.getFullYear(), today.getMonth(), today.getDate() - dayOfWeek + 1 - 14),
-    'dd MMM'
+  const startOfCurrentWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay() + 1);
+  const startOfPreviousWeek = new Date(
+    startOfCurrentWeek.getFullYear(),
+    startOfCurrentWeek.getMonth(),
+    startOfCurrentWeek.getDate() - 7
   );
-  const endPeriod = format(new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1), 'dd MMM');
+  const daysUntilSunday = 7 - today.getDay();
+  const endOfCurrentWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + daysUntilSunday);
+  const twoWeekDays = [];
+  const weekOne = [];
+  const weekTwo = [];
 
-  useEffect(() => {
-    let startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 14);
-    // Loop through the next 14 days
-    const newDays: Day[] = [];
-    for (let i = 0; i < 14; i++) {
-      // Add the current date to the list of days
-      newDays.push({
-        date: startDate,
-        dayOfWeek: startDate.toLocaleDateString('en-UK', { weekday: 'long' })
-      });
+  // Loop through the dates for the previous week and add them to the array
+  for (let date = startOfPreviousWeek; date < startOfCurrentWeek; date.setDate(date.getDate() + 1)) {
+    twoWeekDays.push(new Date(date));
+    weekTwo.push(new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }));
+  }
 
-      // Increment the current date by one day
-      startDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);
-    }
-
-    // Update the state with the new list of days
-    setDays(newDays);
-  }, []);
+  // Loop through the dates for the current week and add them to the array
+  for (let date = startOfCurrentWeek; date <= endOfCurrentWeek; date.setDate(date.getDate() + 1)) {
+    twoWeekDays.push(new Date(date));
+    weekOne.push(new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }));
+  }
 
   return (
     <Stack style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', paddingTop: '1em' }}>
       <Typography style={{ color: 'gray', paddingBottom: '1em' }}>
-        Current Period: {startPeriod} - {endPeriod}
+        Current Period: {weekTwo[0]} - {weekOne[6]}
       </Typography>
       <Box style={{ position: 'relative', display: 'inline-block' }}>
         <CircularProgress
@@ -126,35 +97,29 @@ const TwoWeeks = () => {
         <Typography>Total Hours: {value}</Typography>
       </Box>
       <Typography style={{ fontSize: '1.2em', padding: '0.5em 0 0.1em 0.5em' }}>
-        {weekOne} {'=>'} 59hrs
+        {weekOne[0]} - {weekOne[6]} {'=>'} 59hrs
       </Typography>
-      {days.map(
-        (day, idx) =>
-          idx < 7 && (
-            <div key={day.date.toISOString()}>
-              <ListItem>
-                <ListItemText primary={`${day.dayOfWeek}, ${day.date.toLocaleDateString()}`} disableTypography />
-                <ListItemIcon>{day.dayOfWeek.startsWith('Su') ? 'off' : '9hrs'}</ListItemIcon>
-              </ListItem>
-              <Divider />
-            </div>
-          )
-      )}
+      {weekOne.map((day, idx) => (
+        <div key={idx}>
+          <ListItem>
+            <ListItemText primary={day} disableTypography />
+            <ListItemIcon>{day.startsWith('Su') ? 'off' : '9hrs'}</ListItemIcon>
+          </ListItem>
+          <Divider />
+        </div>
+      ))}
       <Typography style={{ fontSize: '1.2em', padding: '0.5em 0 0.1em 0.5em' }}>
-        {weekTwo} {'=>'} 45hrs
+        {weekTwo[0]} - {weekTwo[6]} {'=>'} 45hrs
       </Typography>
-      {days.map(
-        (day, idx) =>
-          idx > 6 && (
-            <div key={day.date.toISOString()}>
-              <ListItem>
-                <ListItemText primary={`${day.dayOfWeek}, ${day.date.toLocaleDateString()}`} disableTypography />
-                <ListItemIcon>{day.dayOfWeek.startsWith('S') ? 'off' : '9hrs'}</ListItemIcon>
-              </ListItem>
-              <Divider />
-            </div>
-          )
-      )}
+      {weekTwo.map((day, idx) => (
+        <div key={idx}>
+          <ListItem>
+            <ListItemText primary={day} disableTypography />
+            <ListItemIcon>{day.startsWith('S') ? 'off' : '9hrs'}</ListItemIcon>
+          </ListItem>
+          <Divider />
+        </div>
+      ))}
     </Stack>
   );
 };

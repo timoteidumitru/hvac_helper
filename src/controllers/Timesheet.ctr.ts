@@ -2,6 +2,23 @@ import { Request, Response } from 'express';
 import { Profile } from '../models/Profile.model';
 import { Timesheet } from '../models/Timesheet.model';
 
+// get timesheet data
+const getTimesheet = async (req: Request, res: Response) => {
+  const { timesheetID } = req.body;
+
+  try {
+    const timesheet = await Timesheet.findById(timesheetID);
+    if (!timesheet) {
+      return res.status(404).send({ error: 'Timesheet not found!' });
+    }
+
+    res.send(timesheet);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: 'Server error!' });
+  }
+};
+
 // update today's status
 const updateTimesheet = async (req: Request, res: Response) => {
   const { dayIndex, hoursWorked, overtime } = req.body.updateData;
@@ -63,15 +80,13 @@ const createTimesheet = async (req: Request, res: Response) => {
     if (!profile) {
       return res.status(404).send({ error: 'Profile not found..' });
     }
-
     const timesheet = new Timesheet(timesheetData);
-    const period = timesheet?.days[0]?.period;
     timesheet.profileID = profileID;
     const savedTimesheet = await timesheet.save();
-    res.send({ savedTimesheet, period });
+    res.send({ savedTimesheet });
   } catch (error) {
     res.send(error);
   }
 };
 
-export default { pushTimesheet, createTimesheet, updateTimesheet };
+export default { pushTimesheet, createTimesheet, updateTimesheet, getTimesheet };
