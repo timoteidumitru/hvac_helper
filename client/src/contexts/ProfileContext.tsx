@@ -3,6 +3,8 @@ import { LoginContext } from './LoginContext';
 
 export interface ProfileData {
   userId: string;
+  dueDate: string;
+  timesheetID: string;
   name: string;
   phone: number;
   email: string;
@@ -39,6 +41,8 @@ export const ProfileContext = createContext<ProfileContextData>({
   setShowProfile: () => {},
   profileData: {
     userId: '',
+    dueDate: '',
+    timesheetID: '',
     name: '',
     phone: 0,
     email: '',
@@ -58,6 +62,8 @@ export const ProfileContextProvider: React.FC<Props> = ({ children }) => {
   const [showProfile, setShowProfile] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData>({
     userId: loginData._id,
+    dueDate: '',
+    timesheetID: '',
     name: '',
     phone: 0,
     email: loginData.email,

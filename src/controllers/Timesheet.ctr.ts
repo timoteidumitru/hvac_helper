@@ -91,7 +91,7 @@ const createTimesheet = async (req: Request, res: Response) => {
     const timesheet = new Timesheet(timesheetData);
     timesheet.profileID = profileID;
     const savedTimesheet = await timesheet.save();
-    res.send({ savedTimesheet });
+    res.send(savedTimesheet);
   } catch (error) {
     res.send(error);
   }

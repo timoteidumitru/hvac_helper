@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Box, CircularProgress, Typography } from '@material-ui/core';
 import { format } from 'date-fns';
 import { Button } from '@material-ui/core';
 import { IconButton, InputAdornment, Stack, TextField } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import { ProfileContext } from '../../contexts/ProfileContext';
+import { TimesheetContext } from '../../contexts/TimesheetContext';
 
 const getCurrentWeekRange = () => {
   const today = new Date();
@@ -18,25 +19,48 @@ const getCurrentWeekRange = () => {
 
 const ThisWeek = () => {
   const { profileData } = useContext(ProfileContext);
-  const [todayData, setTodayData] = useState({ today: { normalHours: 0, overtime: 0 } });
-  const value = 34;
-  const progress = value / 72;
+  const { timesheetData, setTimesheetData } = useContext(TimesheetContext);
+  const regularHours = 0;
+  const overtimeHours = 0;
+  const totalHours = 0 || regularHours + overtimeHours * 1.5;
+  const progress = 0 || totalHours / 72;
   const weekRange = getCurrentWeekRange();
-  const profileID = profileData.userId;
+  const profileID = profileData._id;
+  const timesheetID = '6403b382d7bb8a32ccdd9a93';
 
-  function postTodayData() {
-    fetch('http://localhost:7079/timesheet/today', {
+  console.log(timesheetData);
+
+  useEffect(() => {
+    const timesheetData = {
+      days: [],
+      dueDate: '05/03/2023',
+      period: '20/02/2023 - 05/03/2023',
+      project: 'Bain Capital',
+      comments: 'HVAC services on all 6 floors'
+    };
+    fetch('http://localhost:7079/timesheet/create', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ profileID, todayData })
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        profileID,
+        timesheetData
+      })
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log('Response:', data);
+        setTimesheetData(data);
       })
       .catch((error) => {
         console.error('Error:', error);
       });
+  }, []);
+
+  // console.log(timesheetData);
+
+  function postTodayData() {
+    console.log('day added');
   }
 
   return (
@@ -94,7 +118,7 @@ const ThisWeek = () => {
         <CircularProgress
           variant="determinate"
           value={progress * 100}
-          style={{ transform: 'rotate(90deg)', color: value < 46 ? 'green' : value > 60 ? 'red' : 'orange' }}
+          style={{ transform: 'rotate(90deg)', color: totalHours < 46 ? 'green' : totalHours > 60 ? 'red' : 'orange' }}
           thickness={3}
           size={120}
         />
@@ -107,8 +131,8 @@ const ThisWeek = () => {
             transform: 'translate(-50%, -50%)'
           }}
         >
-          <span style={{ color: value < 46 ? 'green' : value > 60 ? 'red' : 'orange', fontWeight: '600' }}>
-            {value}h
+          <span style={{ color: totalHours < 46 ? 'green' : totalHours > 60 ? 'red' : 'orange', fontWeight: '600' }}>
+            {totalHours}h
           </span>{' '}
         </Typography>
       </Box>
@@ -127,7 +151,7 @@ const ThisWeek = () => {
             <Typography>Regular Hours</Typography>
           </Box>
           <Box>
-            <Typography>27</Typography>
+            <Typography>{regularHours}</Typography>
           </Box>
         </Box>
         <Box width={'50%'}>
@@ -135,7 +159,7 @@ const ThisWeek = () => {
             <Typography>Overtime Hours</Typography>
           </Box>
           <Box>
-            <Typography>5</Typography>
+            <Typography>{overtimeHours}</Typography>
           </Box>
         </Box>
       </Box>
@@ -148,7 +172,7 @@ const ThisWeek = () => {
           paddingTop: '1em'
         }}
       >
-        <Typography>Total Hours: {value}</Typography>
+        <Typography>Total Hours: {totalHours}</Typography>
       </Box>
     </Stack>
   );

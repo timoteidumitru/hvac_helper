@@ -6,6 +6,8 @@ const profileSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
+  dueDate: { type: String },
+  timesheetID: { type: String },
   name: { type: String },
   phone: { type: String, required: true },
   email: { type: String, required: true },
@@ -26,6 +28,8 @@ const profileSchema = new mongoose.Schema({
 
 export interface ProfileDocument extends mongoose.Document {
   user: UserDocument['_id'];
+  dueDate: string;
+  timesheetID: string;
   name: string;
   phone: number;
   email: string;

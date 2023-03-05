@@ -9,7 +9,6 @@ import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
-import PaidIcon from '@mui/icons-material/Paid';
 import PersonIcon from '@mui/icons-material/Person';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { LoginContext } from '../../contexts/LoginContext';
@@ -278,29 +277,8 @@ export default function UserDetails() {
             />
           </Box>
         </Box>
-        <Box sx={{ '& > :not(style)': { m: 1 } }}>
-          <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-            <PaidIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
-            <TextField
-              name="rate"
-              onChange={handleInputChange}
-              value={profileData?.rate ?? ''}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end" style={{ backgroundColor: 'transparent' }}>
-                    <IconButton type="submit">
-                      <CheckIcon style={{ cursor: 'pointer' }} />
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }}
-              label="Rate: "
-              variant="standard"
-              sx={{ width: '90%' }}
-            />
-          </Box>
-        </Box>
-        {!profileData?.rate ? '' : <Button type="submit">Save</Button>}
+
+        {!profileData.role ? '' : <Button type="submit">Save</Button>}
       </Stack>
     </form>
   );

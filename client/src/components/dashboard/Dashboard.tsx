@@ -14,6 +14,7 @@ export default function Dashboard() {
   const userId = { userId: loginData._id };
 
   useEffect(() => {
+    // GET request to retrieve profile data
     fetch('http://localhost:7079/profile/user', {
       method: 'POST',
       headers: {
