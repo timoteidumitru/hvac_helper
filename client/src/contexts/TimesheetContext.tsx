@@ -1,5 +1,9 @@
 import React, { createContext, useState } from 'react';
 
+export type NestedTimesheetData = {
+  [key: string]: string;
+};
+
 export interface Day {
   date: string;
   hoursWorked: number;
@@ -13,6 +17,7 @@ export interface TimesheetData {
   days: Day[];
   project: string;
   comments: string;
+  [key: string]: NestedTimesheetData | string | any[];
 }
 
 interface Props {
@@ -21,7 +26,9 @@ interface Props {
 
 interface TimesheetContextData {
   timesheetData: TimesheetData;
+  errors: string;
   setTimesheetData: React.Dispatch<React.SetStateAction<TimesheetData>>;
+  setErrors: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const TimesheetContext = createContext<TimesheetContextData>({
@@ -33,10 +40,13 @@ export const TimesheetContext = createContext<TimesheetContextData>({
     project: '',
     comments: ''
   },
-  setTimesheetData: () => {}
+  errors: '',
+  setTimesheetData: () => {},
+  setErrors: () => {}
 });
 
 export const TimesheetContextProvider: React.FC<Props> = ({ children }) => {
+  const [errors, setErrors] = useState('');
   const [timesheetData, setTimesheetData] = useState<TimesheetData>({
     profileID: '',
     dueDate: '',
@@ -46,5 +56,9 @@ export const TimesheetContextProvider: React.FC<Props> = ({ children }) => {
     comments: ''
   });
 
-  return <TimesheetContext.Provider value={{ timesheetData, setTimesheetData }}>{children}</TimesheetContext.Provider>;
+  return (
+    <TimesheetContext.Provider value={{ timesheetData, setTimesheetData, errors, setErrors }}>
+      {children}
+    </TimesheetContext.Provider>
+  );
 };

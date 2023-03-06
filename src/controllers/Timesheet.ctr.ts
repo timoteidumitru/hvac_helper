@@ -67,6 +67,10 @@ const pushTodayTimesheet = async (req: Request, res: Response) => {
       await newTimesheet.save();
       res.status(201).send(newTimesheet);
     } else {
+      const isDateIncluded = timesheet.days.some((day) => day.date === timesheetData.date);
+      if (isDateIncluded) {
+        return res.status(400).send({ error: 'Date already included!' });
+      }
       timesheet.days.push(timesheetData);
       timesheet.days.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
       const updatedTimesheet = await timesheet.save();
