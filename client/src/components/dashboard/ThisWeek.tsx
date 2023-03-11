@@ -22,14 +22,14 @@ const ThisWeek = () => {
   const { profileData } = useContext(ProfileContext);
   const { timesheetData, setTimesheetData, errors, setErrors } = useContext(TimesheetContext);
   const regularHours = 0 || timesheetData.days.reduce((acc, cur) => acc + cur.hoursWorked, 0);
-  const overtimeHours = '' || timesheetData.days.reduce((acc, cur) => acc + cur.overtime, 0);
+  const overtimeHours = 0 || timesheetData.days.reduce((acc, cur) => acc + cur.overtime, 0);
   const totalHours = 0 || regularHours + overtimeHours * 1.5;
   const progress = 0 || totalHours / 72;
   const weekRange = getCurrentWeekRange();
   const profileID = profileData._id;
   const timesheetID = '6404c80d44924e5b9decbcab';
 
-  console.log(timesheetData);
+  // console.log(timesheetData.days);
 
   useEffect(() => {
     fetch('http://localhost:7079/timesheet/get-data', {
@@ -75,8 +75,11 @@ const ThisWeek = () => {
     return `${day}/${month}/${year}`;
   }
 
+  const todayDay = getTodayDate();
+
+  // send todayData to DB
   async function postTodayData() {
-    const timesheetData = {
+    const todayData = {
       date: getTodayDate(),
       hoursWorked: 9,
       overtime: 0
@@ -87,7 +90,7 @@ const ThisWeek = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ profileID, timesheetData })
+        body: JSON.stringify({ profileID, timesheetData: todayData })
       });
 
       if (!response.ok) {
@@ -103,10 +106,29 @@ const ThisWeek = () => {
     }
   }
 
+  async function cancelTodayCheck() {
+    const date = getTodayDate();
+    try {
+      const response = await fetch('http://localhost:7079/timesheet/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ timesheetID, date })
+      });
+      const data = await response.json();
+      setTimesheetData(data);
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async function updateTodayData() {
     const updateData = {
       dayIndex: 0,
-      hoursWorked: 9,
+      hoursWorked: timesheetData.days[0].hoursWorked,
       overtime: timesheetData.days[0].overtime
     };
     try {
@@ -131,59 +153,72 @@ const ThisWeek = () => {
   }
 
   return (
-    <Stack style={{ textAlign: 'center', paddingTop: '1em', color: 'black' }}>
+    <Stack style={{ textAlign: 'center', padding: '1em 0', color: 'black' }}>
       {!errors ? (
-        <Stack>
-          <Typography>Are you IN today?</Typography>
-          <Box
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-around',
-              margin: '1em',
-              marginBottom: '0',
-              fontSize: '1.02em'
-            }}
-          >
-            <Button style={{ backgroundColor: 'red', color: 'white', padding: '0.4em 2.4em', fontWeight: '600' }}>
-              No
-            </Button>
-            <Button
-              style={{
-                backgroundColor: 'green',
-                color: 'white',
-                padding: '0.4em 2.4em',
-                fontWeight: '600'
-              }}
-              onClick={postTodayData}
-            >
-              Yes
-            </Button>
-          </Box>
+        <Stack style={{ padding: '1em 0' }}>
+          {/* {timesheetData?.days[0]?.hoursWorked === 0 ? ( */}
           <Box>
-            <TextField
-              name="days.overtime"
-              value={timesheetData?.days[0]?.overtime || ''}
-              onChange={handleNestedInputChange}
-              InputProps={{
-                style: { textAlign: 'center' },
-                endAdornment: (
-                  <InputAdornment
-                    position="end"
-                    style={{ backgroundColor: 'transparent', padding: '0', paddingRight: '0' }}
-                  >
-                    <IconButton type="submit" style={{ padding: 0 }} onClick={updateTodayData}>
-                      <CheckIcon style={{ cursor: 'pointer' }} />
-                    </IconButton>
-                  </InputAdornment>
-                )
+            <Typography>Are you IN today?</Typography>
+            <Box
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-around',
+                margin: '1em',
+                marginBottom: '0',
+                fontSize: '1.02em'
               }}
-              label="Any overtime to add? "
-              variant="standard"
-              sx={{ width: '50%', marginBottom: '1em' }}
-            />
+            >
+              <Button
+                style={{ backgroundColor: 'red', color: 'white', padding: '0.4em 2.4em', fontWeight: '600' }}
+                onClick={cancelTodayCheck}
+              >
+                No
+              </Button>
+              <Button
+                style={{
+                  backgroundColor: 'green',
+                  color: 'white',
+                  padding: '0.4em 2.4em',
+                  fontWeight: '600'
+                }}
+                onClick={postTodayData}
+              >
+                Yes
+              </Button>
+            </Box>
           </Box>
+          {/* ) : (
+            '' */}
+          {/* )} */}
+          {timesheetData?.days[0]?.date === todayDay ? (
+            <Box>
+              <TextField
+                name="days.overtime"
+                value={timesheetData?.days[0]?.overtime || ''}
+                onChange={handleNestedInputChange}
+                InputProps={{
+                  style: { textAlign: 'center' },
+                  endAdornment: (
+                    <InputAdornment
+                      position="end"
+                      style={{ backgroundColor: 'transparent', padding: '0', paddingRight: '0' }}
+                    >
+                      <IconButton type="submit" style={{ padding: 0 }} onClick={updateTodayData}>
+                        <CheckIcon style={{ cursor: 'pointer' }} />
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+                label="Any overtime to add? "
+                variant="standard"
+                sx={{ width: '50%', marginBottom: '1em' }}
+              />
+            </Box>
+          ) : (
+            ''
+          )}
         </Stack>
       ) : (
         <Typography style={{ padding: '1em', color: 'green', fontSize: '1.1em' }}>

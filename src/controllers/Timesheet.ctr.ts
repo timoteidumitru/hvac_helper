@@ -2,6 +2,30 @@ import { Request, Response } from 'express';
 import { Profile } from '../models/Profile.model';
 import { Timesheet } from '../models/Timesheet.model';
 
+// detele today data from days array
+const deleteTimesheetEntry = async (req: Request, res: Response) => {
+  const { timesheetID, date } = req.body;
+
+  try {
+    const timesheet = await Timesheet.findById(timesheetID);
+    if (!timesheet) {
+      return res.status(404).send({ error: 'Timesheet not found!' });
+    }
+
+    const updatedDays = timesheet.days.filter((day) => {
+      // const dayDate = day.date.split('/').reverse().join('-');
+      return day.date !== date;
+    });
+    timesheet.days = updatedDays;
+
+    await timesheet.save();
+    res.send(timesheet);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: 'Server error!' });
+  }
+};
+
 // get timesheet data
 const getTimesheet = async (req: Request, res: Response) => {
   const { timesheetID } = req.body;
@@ -101,4 +125,4 @@ const createTimesheet = async (req: Request, res: Response) => {
   }
 };
 
-export default { pushTodayTimesheet, createTimesheet, updateTimesheet, getTimesheet };
+export default { pushTodayTimesheet, createTimesheet, updateTimesheet, getTimesheet, deleteTimesheetEntry };
