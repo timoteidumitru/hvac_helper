@@ -29,8 +29,6 @@ const ThisWeek = () => {
   const profileID = profileData._id;
   const timesheetID = '6404c80d44924e5b9decbcab';
 
-  // console.log(timesheetData.days);
-
   useEffect(() => {
     fetch('http://localhost:7079/timesheet/get-data', {
       method: 'POST',
@@ -156,7 +154,6 @@ const ThisWeek = () => {
     <Stack style={{ textAlign: 'center', padding: '1em 0', color: 'black' }}>
       {!errors ? (
         <Stack style={{ padding: '1em 0' }}>
-          {/* {timesheetData?.days[0]?.hoursWorked === 0 ? ( */}
           <Box>
             <Typography>Are you IN today?</Typography>
             <Box
@@ -189,9 +186,6 @@ const ThisWeek = () => {
               </Button>
             </Box>
           </Box>
-          {/* ) : (
-            '' */}
-          {/* )} */}
           {timesheetData?.days[0]?.date === todayDay ? (
             <Box>
               <TextField

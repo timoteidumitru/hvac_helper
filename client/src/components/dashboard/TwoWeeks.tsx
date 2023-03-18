@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Typography, ListItem, ListItemIcon, ListItemText, Box, CircularProgress } from '@material-ui/core';
 import Divider from '@mui/material/Divider';
 import { Stack } from '@mui/system';
+import { TimesheetContext } from '../../contexts/TimesheetContext';
+
+function formatDate(dateStr: string) {
+  const [day, month, year] = dateStr.split('/');
+  const dateObj = new Date(`${month}/${day}/${year}`);
+  const formattedDate = dateObj.toLocaleDateString('en-UK', { weekday: 'short', day: 'numeric', month: 'short' });
+  return formattedDate;
+}
 
 const TwoWeeks = () => {
+  const { timesheetData } = useContext(TimesheetContext);
   const value = 104;
   const progress = value / 150;
   const today = new Date();
@@ -15,22 +24,31 @@ const TwoWeeks = () => {
   );
   const daysUntilSunday = 7 - today.getDay();
   const endOfCurrentWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + daysUntilSunday);
-  const twoWeekDays = [];
+
   const weekOne = [];
   const weekTwo = [];
 
+  const firstWeek = timesheetData.days.slice().reverse();
+  const totalFirstWeek =
+    timesheetData.days.reduce((acc, cur) => {
+      const normal = acc + cur.hoursWorked;
+      const total = normal;
+      return total;
+    }, 0) +
+    timesheetData.days.reduce((acc, cur) => {
+      let overtime = acc + cur.overtime * 1.5;
+      return overtime;
+    }, 0);
+
   // Loop through the dates for the previous week and add them to the array
   for (let date = startOfPreviousWeek; date < startOfCurrentWeek; date.setDate(date.getDate() + 1)) {
-    twoWeekDays.push(new Date(date));
     weekTwo.push(new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }));
   }
 
   // Loop through the dates for the current week and add them to the array
   for (let date = startOfCurrentWeek; date <= endOfCurrentWeek; date.setDate(date.getDate() + 1)) {
-    twoWeekDays.push(new Date(date));
     weekOne.push(new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }));
   }
-
   return (
     <Stack style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', paddingTop: '1em' }}>
       <Typography style={{ color: 'gray', paddingBottom: '1em' }}>
@@ -96,30 +114,34 @@ const TwoWeeks = () => {
       >
         <Typography>Total Hours: {value}</Typography>
       </Box>
-      <Typography style={{ fontSize: '1.2em', padding: '0.5em 0 0.1em 0.5em' }}>
-        {weekOne[0]} - {weekOne[6]} {'=>'} 59hrs
-      </Typography>
-      {weekOne.map((day, idx) => (
-        <div key={idx}>
-          <ListItem>
-            <ListItemText primary={day} disableTypography />
-            <ListItemIcon>{day.startsWith('Su') ? 'off' : '9hrs'}</ListItemIcon>
-          </ListItem>
-          <Divider />
-        </div>
-      ))}
-      <Typography style={{ fontSize: '1.2em', padding: '0.5em 0 0.1em 0.5em' }}>
-        {weekTwo[0]} - {weekTwo[6]} {'=>'} 45hrs
-      </Typography>
-      {weekTwo.map((day, idx) => (
-        <div key={idx}>
-          <ListItem>
-            <ListItemText primary={day} disableTypography />
-            <ListItemIcon>{day.startsWith('S') ? 'off' : '9hrs'}</ListItemIcon>
-          </ListItem>
-          <Divider />
-        </div>
-      ))}
+      <Box>
+        <Typography style={{ fontSize: '1.2em', padding: '0.5em 0 0.1em 0.5em' }}>
+          {weekOne[0]} - {weekOne[6]} {'->'} {totalFirstWeek}hrs
+        </Typography>
+        {firstWeek.map((day, idx) => (
+          <div key={idx}>
+            <ListItem>
+              <ListItemText>{formatDate(day.date)}</ListItemText>
+              <ListItemIcon>
+                {day.hoursWorked}hrs(+{day.overtime})
+              </ListItemIcon>
+            </ListItem>
+            <Divider />
+          </div>
+        ))}
+        <Typography style={{ fontSize: '1.2em', padding: '0.5em 0 0.1em 0.5em' }}>
+          {weekTwo[0]} - {weekTwo[6]} {'=>'} 45hrs
+        </Typography>
+        {weekTwo.map((day, idx) => (
+          <div key={idx}>
+            <ListItem>
+              <ListItemText primary={day} disableTypography />
+              <ListItemIcon>{day.startsWith('S') ? 'off' : '9hrs'}</ListItemIcon>
+            </ListItem>
+            <Divider />
+          </div>
+        ))}
+      </Box>
     </Stack>
   );
 };
