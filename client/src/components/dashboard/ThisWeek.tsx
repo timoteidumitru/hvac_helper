@@ -1,9 +1,8 @@
 import React, { useContext, useEffect } from 'react';
-import { Box, CircularProgress, Typography } from '@material-ui/core';
-import { format } from 'date-fns';
-import { Button } from '@material-ui/core';
-import { IconButton, InputAdornment, Stack, TextField } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
+import { Box, CircularProgress, Typography, Button } from '@material-ui/core';
+import { IconButton, InputAdornment, Stack, TextField } from '@mui/material';
+import { format } from 'date-fns';
 import { ProfileContext } from '../../contexts/ProfileContext';
 import { TimesheetContext } from '../../contexts/TimesheetContext';
 
@@ -18,6 +17,15 @@ const getCurrentWeekRange = () => {
   return `${startFormatted} - ${endFormatted}`;
 };
 
+// get today date in format DD/MM/YYYY
+function getTodayDate() {
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // January is 0!
+  const year = now.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
 const ThisWeek = () => {
   const { profileData } = useContext(ProfileContext);
   const { timesheetData, setTimesheetData, errors, setErrors } = useContext(TimesheetContext);
@@ -26,6 +34,7 @@ const ThisWeek = () => {
   const totalHours = 0 || regularHours + overtimeHours * 1.5;
   const progress = 0 || totalHours / 72;
   const weekRange = getCurrentWeekRange();
+  const todayDay = getTodayDate();
   const profileID = profileData._id;
   const timesheetID = '6404c80d44924e5b9decbcab';
 
@@ -50,10 +59,11 @@ const ThisWeek = () => {
   const handleNestedInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     const [parentName, childName] = name.split('.');
+    const lastDayIndex = timesheetData.days.length - 1;
     setTimesheetData((prevState) => ({
       ...prevState,
       days: prevState.days.map((day, index) => {
-        if (index === 0) {
+        if (index === lastDayIndex) {
           return {
             ...day,
             [childName]: value
@@ -63,17 +73,6 @@ const ThisWeek = () => {
       })
     }));
   };
-
-  // get today date in format DD/MM/YYYY
-  function getTodayDate(): string {
-    const now = new Date();
-    const day = String(now.getDate()).padStart(2, '0');
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // January is 0!
-    const year = now.getFullYear();
-    return `${day}/${month}/${year}`;
-  }
-
-  const todayDay = getTodayDate();
 
   // send todayData to DB
   async function postTodayData() {
@@ -124,10 +123,12 @@ const ThisWeek = () => {
   }
 
   async function updateTodayData() {
+    const lastDayIndex = timesheetData.days.length - 1;
+    const lastDay = timesheetData.days[lastDayIndex];
     const updateData = {
-      dayIndex: 0,
-      hoursWorked: timesheetData.days[0].hoursWorked,
-      overtime: timesheetData.days[0].overtime
+      dayIndex: lastDayIndex,
+      hoursWorked: timesheetData.days[lastDayIndex].hoursWorked,
+      overtime: timesheetData.days[lastDayIndex].overtime
     };
     try {
       const response = await fetch('http://localhost:7079/timesheet/update-day', {
@@ -144,7 +145,10 @@ const ThisWeek = () => {
       }
       const timesheet = await response.json();
       console.log(timesheet);
-      setTimesheetData(timesheet);
+      // Update the last day in the days array with the updated data
+      const updatedDays = [...timesheetData.days];
+      updatedDays[lastDayIndex] = { ...lastDay, ...updateData };
+      setTimesheetData({ ...timesheetData, days: updatedDays });
     } catch (error) {
       console.log(error);
     }
@@ -186,11 +190,11 @@ const ThisWeek = () => {
               </Button>
             </Box>
           </Box>
-          {timesheetData?.days[0]?.date === todayDay ? (
+          {timesheetData?.days.at(-1)?.date === todayDay && (
             <Box>
               <TextField
                 name="days.overtime"
-                value={timesheetData?.days[0]?.overtime || ''}
+                value={timesheetData?.days.at(-1)?.overtime || ''}
                 onChange={handleNestedInputChange}
                 InputProps={{
                   style: { textAlign: 'center' },
@@ -210,8 +214,6 @@ const ThisWeek = () => {
                 sx={{ width: '50%', marginBottom: '1em' }}
               />
             </Box>
-          ) : (
-            ''
           )}
         </Stack>
       ) : (

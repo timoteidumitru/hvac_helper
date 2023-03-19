@@ -11,44 +11,64 @@ function formatDate(dateStr: string) {
   return formattedDate;
 }
 
+function getWeekDays() {
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const today = new Date();
+  const currentDay = today.getDay() === 0 ? 6 : today.getDay();
+  const currentWeekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - currentDay);
+  const previousWeekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - currentDay - 7);
+  const weekOne = [];
+  const weekTwo = [];
+
+  // Add current week days to array
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(currentWeekStart.getFullYear(), currentWeekStart.getMonth(), currentWeekStart.getDate() + i);
+    weekOne.push(`${day.toLocaleString('default', { weekday: 'short', day: 'numeric', month: 'short' })}`);
+  }
+
+  // Add previous week days to array
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(
+      previousWeekStart.getFullYear(),
+      previousWeekStart.getMonth(),
+      previousWeekStart.getDate() + i
+    );
+    weekTwo.push(`${day.toLocaleString('default', { weekday: 'short', day: 'numeric', month: 'short' })}`);
+  }
+
+  return { weekOne, weekTwo };
+}
+
 const TwoWeeks = () => {
   const { timesheetData } = useContext(TimesheetContext);
   const value = 104;
   const progress = value / 150;
-  const today = new Date();
-  const startOfCurrentWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay() + 1);
-  const startOfPreviousWeek = new Date(
-    startOfCurrentWeek.getFullYear(),
-    startOfCurrentWeek.getMonth(),
-    startOfCurrentWeek.getDate() - 7
-  );
-  const daysUntilSunday = 7 - today.getDay();
-  const endOfCurrentWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + daysUntilSunday);
 
-  const weekOne = [];
-  const weekTwo = [];
+  const { weekOne, weekTwo } = getWeekDays();
+  // console.log(weekOne, weekTwo);
 
-  const firstWeek = timesheetData.days.slice().reverse();
+  const firstWeek = timesheetData.days.slice();
+  const secondWeek = timesheetData.days.slice();
+
   const totalFirstWeek =
     timesheetData.days.reduce((acc, cur) => {
       const normal = acc + cur.hoursWorked;
-      const total = normal;
-      return total;
+      return normal;
+    }, 0) +
+    timesheetData.days.reduce((acc, cur) => {
+      let overtime = acc + cur.overtime * 1.5;
+      return overtime;
+    }, 0);
+  const totalSecondWeek =
+    timesheetData.days.reduce((acc, cur) => {
+      const normal = acc + cur.hoursWorked;
+      return normal;
     }, 0) +
     timesheetData.days.reduce((acc, cur) => {
       let overtime = acc + cur.overtime * 1.5;
       return overtime;
     }, 0);
 
-  // Loop through the dates for the previous week and add them to the array
-  for (let date = startOfPreviousWeek; date < startOfCurrentWeek; date.setDate(date.getDate() + 1)) {
-    weekTwo.push(new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }));
-  }
-
-  // Loop through the dates for the current week and add them to the array
-  for (let date = startOfCurrentWeek; date <= endOfCurrentWeek; date.setDate(date.getDate() + 1)) {
-    weekOne.push(new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }));
-  }
   return (
     <Stack style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', paddingTop: '1em' }}>
       <Typography style={{ color: 'gray', paddingBottom: '1em' }}>
@@ -116,7 +136,7 @@ const TwoWeeks = () => {
       </Box>
       <Box>
         <Typography style={{ fontSize: '1.2em', padding: '0.5em 0 0.1em 0.5em' }}>
-          {weekOne[0]} - {weekOne[6]} {'->'} {totalFirstWeek}hrs
+          {weekTwo[0]} - {weekTwo[6]} {'->'} {totalSecondWeek}hrs
         </Typography>
         {firstWeek.map((day, idx) => (
           <div key={idx}>
@@ -130,13 +150,15 @@ const TwoWeeks = () => {
           </div>
         ))}
         <Typography style={{ fontSize: '1.2em', padding: '0.5em 0 0.1em 0.5em' }}>
-          {weekTwo[0]} - {weekTwo[6]} {'=>'} 45hrs
+          {weekOne[0]} - {weekOne[6]} {'->'} {totalFirstWeek}hrs
         </Typography>
-        {weekTwo.map((day, idx) => (
+        {secondWeek.map((day, idx) => (
           <div key={idx}>
             <ListItem>
-              <ListItemText primary={day} disableTypography />
-              <ListItemIcon>{day.startsWith('S') ? 'off' : '9hrs'}</ListItemIcon>
+              <ListItemText>{formatDate(day.date)}</ListItemText>
+              <ListItemIcon>
+                {day.hoursWorked}hrs(+{day.overtime})
+              </ListItemIcon>
             </ListItem>
             <Divider />
           </div>

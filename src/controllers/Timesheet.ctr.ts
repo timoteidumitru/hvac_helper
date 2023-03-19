@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Profile } from '../models/Profile.model';
-import { Timesheet } from '../models/Timesheet.model';
+import { Week, Day, ITimesheetData, Timesheet } from '../models/Timesheet.model';
 
 // detele today data from days array
 const deleteTimesheetEntry = async (req: Request, res: Response) => {
@@ -12,11 +12,10 @@ const deleteTimesheetEntry = async (req: Request, res: Response) => {
       return res.status(404).send({ error: 'Timesheet not found!' });
     }
 
-    const updatedDays = timesheet.days.filter((day) => {
-      // const dayDate = day.date.split('/').reverse().join('-');
-      return day.date !== date;
+    const updatedDays = timesheet.data.filter((dt) => {
+      return dt.weekEnd !== date;
     });
-    timesheet.days = updatedDays;
+    timesheet.data = updatedDays;
 
     await timesheet.save();
     res.send(timesheet);
@@ -45,7 +44,7 @@ const getTimesheet = async (req: Request, res: Response) => {
 
 // update today's status
 const updateTimesheet = async (req: Request, res: Response) => {
-  const { dayIndex, hoursWorked, overtime } = req.body.updateData;
+  const { weekIndex, weekEnd } = req.body.updateData;
   const { timesheetID } = req.body;
 
   try {
@@ -54,13 +53,12 @@ const updateTimesheet = async (req: Request, res: Response) => {
       return res.status(404).send({ error: 'Timesheet not found!' });
     }
 
-    const day = timesheet.days[dayIndex];
-    if (!day) {
+    const week = timesheet.data[weekIndex];
+    if (!week) {
       return res.status(404).send({ error: 'Day not found!' });
     }
 
-    day.hoursWorked = hoursWorked;
-    day.overtime = overtime;
+    week.weekEnd = weekEnd;
 
     const updatedTimesheet = await timesheet.save();
 
@@ -73,36 +71,52 @@ const updateTimesheet = async (req: Request, res: Response) => {
 
 // add today's status
 const pushTodayTimesheet = async (req: Request, res: Response) => {
-  const { profileID, timesheetData } = req.body;
+  const { timesheetID, weekIndex, date, hoursWorked, overtime } = req.body.timesheetData as ITimesheetData;
 
   try {
-    const profile = await Profile.findById(profileID);
-    if (!profile) {
-      return res.status(404).send({ error: 'Profile not found!' });
+    const ts: Timesheet = (await Timesheet.findById(timesheetID)) as Timesheet;
+
+    if (!ts) {
+      return res.status(404).json({ error: 'Timesheet not found' });
     }
 
-    const timesheet = await Timesheet.findOne({ profileID: profile._id });
+    // Get the week object from the specified week index or create a new week if it doesn't exist
+    let week: Week = ts.data[weekIndex];
 
-    if (!timesheet) {
-      const newTimesheet = new Timesheet({
-        profileID: profile._id,
-        days: [timesheetData]
-      });
-      await newTimesheet.save();
-      res.status(201).send(newTimesheet);
+    if (!week) {
+      week = {
+        weekEnd: date,
+        days: []
+      };
+
+      ts.data[weekIndex] = week;
+    }
+
+    // Check if a day object already exists for the current date
+    const existingDay = week.days.find((day) => day.date === date);
+
+    // If a day object already exists, update its properties
+    if (existingDay) {
+      existingDay.hoursWorked = hoursWorked;
+      existingDay.overtime = overtime;
     } else {
-      const isDateIncluded = timesheet.days.some((day) => day.date === timesheetData.date);
-      if (isDateIncluded) {
-        return res.status(400).send({ error: 'Date already included!' });
-      }
-      timesheet.days.push(timesheetData);
-      timesheet.days.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-      const updatedTimesheet = await timesheet.save();
-      res.status(201).send(updatedTimesheet);
+      // If a day object doesn't already exist, create a new one
+      const newDay: Day = {
+        date: date,
+        hoursWorked: hoursWorked,
+        overtime: overtime
+      };
+
+      week.days.push(newDay);
     }
+
+    // Save the updated timesheet to the database
+    await ts.save();
+
+    return res.status(201).json(ts);
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: 'Server error! Invalid Date Range!' });
+    return res.status(500).json({ error: 'Server error' });
   }
 };
 

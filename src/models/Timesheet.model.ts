@@ -1,17 +1,30 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { ProfileDocument } from './Profile.model';
 
-export interface Day extends Document {
+export interface ITimesheetData {
+  timesheetID: string;
+  weekIndex: number;
   date: string;
   hoursWorked: number;
   overtime: number;
 }
 
+export interface Day {
+  date: string;
+  hoursWorked: number;
+  overtime: number;
+}
+
+export interface Week {
+  weekEnd: string;
+  days: Day[];
+}
+
 export interface Timesheet extends Document {
   profileID: ProfileDocument['_id'];
   dueDate: string;
+  data: Week[];
   period: string;
-  days: Day[];
   project: string;
   comments: string;
 }
@@ -28,7 +41,7 @@ const daySchema: Schema<Day> = new Schema({
         }
         const today = new Date();
         const currentDay = today.getDay(); // 0 (Sunday) to 6 (Saturday)
-        const daysSinceLastMonday = currentDay === 1 ? 7 : currentDay - 1;
+        const daysSinceLastMonday = currentDay === 0 ? 7 : currentDay - 1;
         const lastMonday = new Date(today.getTime() - daysSinceLastMonday * 24 * 3600 * 1000 - 7 * 24 * 3600 * 1000);
         const [dd, mm, yyyy] = value.split('/');
         const date = new Date(`${yyyy}-${mm}-${dd}`);
@@ -37,7 +50,7 @@ const daySchema: Schema<Day> = new Schema({
         endDate.setDate(endDate.getDate() + 14);
         return date >= startDate && date <= endDate;
       },
-      message: 'Date must be within the current pay period (past two weeks) and in the format DD/MM/YYYY'
+      message: 'Date must be within the current pay period (past week) and in the format DD/MM/YYYY'
     }
   },
   hoursWorked: {
@@ -61,14 +74,20 @@ const daySchema: Schema<Day> = new Schema({
     }
   }
 });
+const weekSchema: Schema<Week> = new Schema({
+  weekEnd: {
+    type: String
+  },
+  days: [daySchema]
+});
 
 const timesheetSchema: Schema = new Schema({
   profileID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Profile'
   },
-  days: [daySchema],
   dueDate: { type: String },
+  data: [weekSchema],
   period: {
     type: String,
     default: function (this: Timesheet): string {
