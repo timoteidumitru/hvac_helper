@@ -5,16 +5,19 @@ export type NestedTimesheetData = {
 };
 
 export interface Day {
-  date: string;
-  hoursWorked: number;
-  overtime: number;
+  weekEnd: string;
+  days: {
+    date: string;
+    hoursWorked: number;
+    overtime: number;
+  };
 }
 
 export interface TimesheetData {
   profileID: string;
   dueDate: string;
   period: string;
-  days: Day[];
+  data: Day[];
   project: string;
   comments: string;
   [key: string]: NestedTimesheetData | string | any[];
@@ -36,7 +39,7 @@ export const TimesheetContext = createContext<TimesheetContextData>({
     profileID: '',
     dueDate: '',
     period: '',
-    days: [],
+    data: [],
     project: '',
     comments: ''
   },
@@ -51,7 +54,7 @@ export const TimesheetContextProvider: React.FC<Props> = ({ children }) => {
     profileID: '',
     dueDate: '',
     period: '',
-    days: [],
+    data: [],
     project: '',
     comments: ''
   });

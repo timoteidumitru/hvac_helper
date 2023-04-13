@@ -1,10 +1,10 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import CheckIcon from '@mui/icons-material/Check';
 import { Box, CircularProgress, Typography, Button } from '@material-ui/core';
 import { IconButton, InputAdornment, Stack, TextField } from '@mui/material';
 import { format } from 'date-fns';
 import { ProfileContext } from '../../contexts/ProfileContext';
-import { TimesheetContext } from '../../contexts/TimesheetContext';
+import { Day, TimesheetContext } from '../../contexts/TimesheetContext';
 
 const getCurrentWeekRange = () => {
   const today = new Date();
@@ -29,40 +29,74 @@ function getTodayDate() {
 const ThisWeek = () => {
   const { profileData } = useContext(ProfileContext);
   const { timesheetData, setTimesheetData, errors, setErrors } = useContext(TimesheetContext);
-  const regularHours = 0 || timesheetData.days.reduce((acc, cur) => acc + cur.hoursWorked, 0);
-  const overtimeHours = 0 || timesheetData.days.reduce((acc, cur) => acc + cur.overtime, 0);
+  const regularHours = 0;
+  const overtimeHours = 0;
   const totalHours = 0 || regularHours + overtimeHours * 1.5;
   const progress = 0 || totalHours / 72;
   const weekRange = getCurrentWeekRange();
   const todayDay = getTodayDate();
   const profileID = profileData._id;
-  const timesheetID = '6404c80d44924e5b9decbcab';
+  const timesheetID = '64382e74b12d97556ea30bc4';
+
+  const fetchData = useMemo<() => Promise<void>>(() => {
+    return async () => {
+      try {
+        const response = await fetch('http://localhost:7079/timesheet/get-data', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ timesheetID })
+        });
+        const data = await response.json();
+        setTimesheetData(data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+  }, [timesheetID]);
+
+  const createTimesheet = useMemo<() => Promise<void>>(() => {
+    const currentPay = {
+      days: [],
+      dueDate: '16/04/2023',
+      project: 'QOB Investors',
+      comments: 'HVAC services on all 8 floors'
+    };
+    return async () => {
+      try {
+        const response = await fetch('http://localhost:7079/timesheet/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ profileID, timesheetData: currentPay })
+        });
+        const data = await response.json();
+        setTimesheetData(data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+  }, [timesheetID]);
+  console.log(timesheetData.days);
 
   useEffect(() => {
-    fetch('http://localhost:7079/timesheet/get-data', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ timesheetID })
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setTimesheetData(data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  }, []);
+    if (timesheetData.days === undefined) {
+      createTimesheet();
+    } else {
+      fetchData();
+    }
+  }, [fetchData]);
 
   // handle overtime input
   const handleNestedInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     const [parentName, childName] = name.split('.');
-    const lastDayIndex = timesheetData.days.length - 1;
+    const lastDayIndex = timesheetData.data.length - 1;
     setTimesheetData((prevState) => ({
       ...prevState,
-      days: prevState.days.map((day, index) => {
+      days: prevState.data.map((day, index) => {
         if (index === lastDayIndex) {
           return {
             ...day,
@@ -122,37 +156,46 @@ const ThisWeek = () => {
     }
   }
 
-  async function updateTodayData() {
-    const lastDayIndex = timesheetData.days.length - 1;
-    const lastDay = timesheetData.days[lastDayIndex];
-    const updateData = {
-      dayIndex: lastDayIndex,
-      hoursWorked: timesheetData.days[lastDayIndex].hoursWorked,
-      overtime: timesheetData.days[lastDayIndex].overtime
-    };
-    try {
-      const response = await fetch('http://localhost:7079/timesheet/update-day', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ timesheetID, updateData })
-      });
+  // async function updateTodayData() {
+  //   const days = timesheetData?.data[0]?.days;
+  //   const lastDayIndex = Object.keys(days)[Object.keys(days).length - 1];
+  //   const lastDay = days[lastDayIndex];
+  //   const updateData: Day = {
+  //     dayIndex: lastDayIndex,
+  //     hoursWorked: lastDay.hoursWorked,
+  //     overtime: lastDay.overtime
+  //   };
+  //   try {
+  //     const response = await fetch('http://localhost:7079/timesheet/update-day', {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify({ timesheetID, updateData })
+  //     });
 
-      if (!response.ok) {
-        const { error } = await response.json();
-        throw new Error(error || 'An error occurred adding data.');
-      }
-      const timesheet = await response.json();
-      console.log(timesheet);
-      // Update the last day in the days array with the updated data
-      const updatedDays = [...timesheetData.days];
-      updatedDays[lastDayIndex] = { ...lastDay, ...updateData };
-      setTimesheetData({ ...timesheetData, days: updatedDays });
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  //     if (!response.ok) {
+  //       const { error } = await response.json();
+  //       throw new Error(error || 'An error occurred adding data.');
+  //     }
+  //     const timesheet = await response.json();
+  //     console.log(timesheet);
+  //     // Update the last day in the days array with the updated data
+  //     const updatedDays = [...timesheetData?.data[0]?.days];
+  //     updatedDays[lastDayIndex] = { ...lastDay, ...updateData };
+  //     setTimesheetData({ ...timesheetData, data: [{ ...timesheetData.data[0], days: updatedDays }] });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
+  // let sums = timesheetData.data[0]?.days || 0;
+  // let myArr = [];
+  // for (const val in sums) {
+  //   myArr.push(sums[val]);
+  // }
+  // console.log(sums);
+  // console.log(timesheetData.data[0].days?.map((el): any => el));
 
   return (
     <Stack style={{ textAlign: 'center', padding: '1em 0', color: 'black' }}>
@@ -190,11 +233,11 @@ const ThisWeek = () => {
               </Button>
             </Box>
           </Box>
-          {timesheetData?.days.at(-1)?.date === todayDay && (
+          {timesheetData && (
             <Box>
               <TextField
                 name="days.overtime"
-                value={timesheetData?.days.at(-1)?.overtime || ''}
+                value={''}
                 onChange={handleNestedInputChange}
                 InputProps={{
                   style: { textAlign: 'center' },
@@ -203,7 +246,7 @@ const ThisWeek = () => {
                       position="end"
                       style={{ backgroundColor: 'transparent', padding: '0', paddingRight: '0' }}
                     >
-                      <IconButton type="submit" style={{ padding: 0 }} onClick={updateTodayData}>
+                      <IconButton type="submit" style={{ padding: 0 }}>
                         <CheckIcon style={{ cursor: 'pointer' }} />
                       </IconButton>
                     </InputAdornment>

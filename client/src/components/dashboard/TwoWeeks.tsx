@@ -47,27 +47,27 @@ const TwoWeeks = () => {
   const { weekOne, weekTwo } = getWeekDays();
   // console.log(weekOne, weekTwo);
 
-  const firstWeek = timesheetData.days.slice();
-  const secondWeek = timesheetData.days.slice();
+  const firstWeek = timesheetData?.data?.slice() || {};
+  const secondWeek = timesheetData?.data?.slice() || {};
 
-  const totalFirstWeek =
-    timesheetData.days.reduce((acc, cur) => {
-      const normal = acc + cur.hoursWorked;
-      return normal;
-    }, 0) +
-    timesheetData.days.reduce((acc, cur) => {
-      let overtime = acc + cur.overtime * 1.5;
-      return overtime;
-    }, 0);
-  const totalSecondWeek =
-    timesheetData.days.reduce((acc, cur) => {
-      const normal = acc + cur.hoursWorked;
-      return normal;
-    }, 0) +
-    timesheetData.days.reduce((acc, cur) => {
-      let overtime = acc + cur.overtime * 1.5;
-      return overtime;
-    }, 0);
+  // const totalFirstWeek =
+  //   timesheetData?.data[0]?.days?.reduce((acc, cur) => {
+  //     const normal = acc + cur.hoursWorked;
+  //     return normal;
+  //   }, 0) +
+  //   timesheetData.data.reduce((acc, cur) => {
+  //     let overtime = acc + cur.overtime * 1.5;
+  //     return overtime;
+  //   }, 0);
+  // const totalSecondWeek =
+  //   timesheetData.data.reduce((acc, cur) => {
+  //     const normal = acc + cur.hoursWorked;
+  //     return normal;
+  //   }, 0) +
+  //   timesheetData.data.reduce((acc, cur) => {
+  //     let overtime = acc + cur.overtime * 1.5;
+  //     return overtime;
+  //   }, 0);
 
   return (
     <Stack style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', paddingTop: '1em' }}>
@@ -136,9 +136,9 @@ const TwoWeeks = () => {
       </Box>
       <Box>
         <Typography style={{ fontSize: '1.2em', padding: '0.5em 0 0.1em 0.5em' }}>
-          {weekTwo[0]} - {weekTwo[6]} {'->'} {totalSecondWeek}hrs
+          {weekTwo[0]} - {weekTwo[6]} {'->'} `totalSecondWeek`hrs
         </Typography>
-        {firstWeek.map((day, idx) => (
+        {/* {firstWeek.map((day, idx) => (
           <div key={idx}>
             <ListItem>
               <ListItemText>{formatDate(day.date)}</ListItemText>
@@ -162,7 +162,7 @@ const TwoWeeks = () => {
             </ListItem>
             <Divider />
           </div>
-        ))}
+        ))} */}
       </Box>
     </Stack>
   );

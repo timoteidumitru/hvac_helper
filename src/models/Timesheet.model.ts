@@ -1,14 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { ProfileDocument } from './Profile.model';
 
-export interface ITimesheetData {
-  timesheetID: string;
-  weekIndex: number;
-  date: string;
-  hoursWorked: number;
-  overtime: number;
-}
-
 export interface Day {
   date: string;
   hoursWorked: number;
@@ -34,23 +26,18 @@ const daySchema: Schema<Day> = new Schema({
     type: String,
     validate: {
       validator: function (this: Day, value: string): boolean {
-        // Ensure the date is within the current pay period and in the format DD/MM/YYYY
+        // Ensure the date is within the past two weeks and in the format DD/MM/YYYY
         const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
         if (!dateRegex.test(value)) {
           return false;
         }
         const today = new Date();
-        const currentDay = today.getDay(); // 0 (Sunday) to 6 (Saturday)
-        const daysSinceLastMonday = currentDay === 0 ? 7 : currentDay - 1;
-        const lastMonday = new Date(today.getTime() - daysSinceLastMonday * 24 * 3600 * 1000 - 7 * 24 * 3600 * 1000);
         const [dd, mm, yyyy] = value.split('/');
         const date = new Date(`${yyyy}-${mm}-${dd}`);
-        const startDate = lastMonday;
-        const endDate = new Date(startDate.getTime());
-        endDate.setDate(endDate.getDate() + 14);
-        return date >= startDate && date <= endDate;
+        const twoWeeksAgo = new Date(today.getTime() - 14 * 24 * 3600 * 1000);
+        return date >= twoWeeksAgo && date <= today;
       },
-      message: 'Date must be within the current pay period (past week) and in the format DD/MM/YYYY'
+      message: 'Date must be within the past two weeks (in the format DD/MM/YYYY)'
     }
   },
   hoursWorked: {
@@ -74,6 +61,7 @@ const daySchema: Schema<Day> = new Schema({
     }
   }
 });
+
 const weekSchema: Schema<Week> = new Schema({
   weekEnd: {
     type: String
@@ -88,27 +76,6 @@ const timesheetSchema: Schema = new Schema({
   },
   dueDate: { type: String },
   data: [weekSchema],
-  period: {
-    type: String,
-    default: function (this: Timesheet): string {
-      const [dd, mm, yyyy] = this.dueDate.split('/');
-      const dueDay = new Date(`${yyyy}-${mm}-${dd}`);
-      const start = new Date(dueDay.getTime() - 13 * 24 * 3600 * 1000);
-      const end = new Date(dueDay.getTime() - 0 * 24 * 3600 * 1000);
-      const startFormatted = start.toLocaleDateString('en-UK', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-      const endFormatted = end.toLocaleDateString('en-UK', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-      return `${startFormatted} - ${endFormatted}`;
-    },
-    readonly: true
-  },
   project: {
     type: String
   },

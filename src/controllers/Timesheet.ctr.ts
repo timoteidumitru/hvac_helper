@@ -1,6 +1,14 @@
 import { Request, Response } from 'express';
 import { Profile } from '../models/Profile.model';
-import { Week, Day, ITimesheetData, Timesheet } from '../models/Timesheet.model';
+import { Week, Day, Timesheet } from '../models/Timesheet.model';
+
+export interface ITimesheetData {
+  timesheetID: string;
+  weekIndex: number;
+  date: string;
+  hoursWorked: number;
+  overtime: number;
+}
 
 // detele today data from days array
 const deleteTimesheetEntry = async (req: Request, res: Response) => {
