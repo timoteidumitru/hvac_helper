@@ -27,7 +27,7 @@ npm run start -> will start server for client side on: http://localhost:3000
 
 #### Frontend:
 
-- React CLI version 18+ with TypeScript
+- React CLI version 18+
 - SASS and MaterialUI for style
 - Context APi as state management
 - React Router Dom v6.8 for routing system
