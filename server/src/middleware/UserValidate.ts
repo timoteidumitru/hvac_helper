@@ -22,7 +22,8 @@ export const Schemas = {
   user: {
     create: Joi.object<UserDocument>({
       email: Joi.string().email().required(),
-      password: Joi.string().required()
+      password: Joi.string().required(),
+      fullName: Joi.string().required()
     }),
     validate: Joi.object<UserDocument>({
       email: Joi.string().email().required(),

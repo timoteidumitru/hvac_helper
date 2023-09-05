@@ -3,18 +3,35 @@ import { User } from '../models/Users.model';
 
 // create new user
 const createUser = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ message: 'Username and password are required.' });
+  const { fullName, email, password } = req.body;
 
-  const user = new User({
-    email,
-    password
-  });
+  try {
+    // Check if required fields are provided
+    if (!fullName || !email || !password) {
+      return res.status(400).json({ message: 'Full Name, Email, and Password are required.' });
+    }
 
-  return user
-    .save()
-    .then((user: any) => res.status(201).json({ user }))
-    .catch((error: any) => res.status(500).json({ message: error.message }));
+    // Check if the user with the same email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: 'Email already in use.' });
+    }
+
+    // Create a new user instance
+    const user = new User({
+      fullName,
+      email,
+      password
+    });
+
+    // Save the user to the database
+    await user.save();
+
+    // Respond with a success message and user data
+    return res.status(201).json({ message: 'User registered successfully', user });
+  } catch (error) {
+    return res.status(500).json({ message: error });
+  }
 };
 
 // authenticate the user

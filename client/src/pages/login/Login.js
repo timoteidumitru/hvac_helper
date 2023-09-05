@@ -6,15 +6,16 @@ import {
   Typography,
   FormControlLabel,
   Checkbox,
-  Link,
   Box,
 } from "@mui/material";
+import { useNavigate, NavLink } from "react-router-dom";
 import axios from "../../api/axios";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -30,9 +31,15 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const response = await axios.post("/user/auth", { email, password });
       console.log(response.data);
+
+      // Delay the redirection to /dashboard by 1 second (1000 milliseconds)
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
     } catch (error) {
       if (error) console.log("Error on login: ", error.message);
     }
@@ -95,7 +102,7 @@ const LoginForm = () => {
       </form>
       <Box mt={2}>
         <Typography>
-          Don't have an account? <Link to="/register">Sign Up!</Link>
+          Don't have an account? <NavLink to="/register">Sign Up!</NavLink>
         </Typography>
       </Box>
     </Container>
