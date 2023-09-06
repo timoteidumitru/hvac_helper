@@ -46,3 +46,10 @@ npm run start -> will start server for client side on: http://localhost:3000
 - Auto Rename Tags - self explained
 - DotENV - support for environment variables
 - ES7+ React/Redux for fast scafolding of components
+
+#### Steps so far:
+
+- UI for login page
+- UI for register page
+- Basic of Routing system implementation
+- Build API for create/login user
