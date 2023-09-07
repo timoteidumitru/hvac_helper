@@ -9,9 +9,10 @@ import {
   Box,
 } from "@mui/material";
 import { useNavigate, NavLink } from "react-router-dom";
-import axios from "../../api/axios";
+import { useAuth } from "../../context/AuthContext"; // Import the useAuth hook
 
 const LoginForm = () => {
+  const { login, user } = useAuth(); // Access the login function and user data
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -33,15 +34,15 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("/user/auth", { email, password });
-      console.log(response.data);
+      await login(email, password); // Use the login function from the context
 
-      // Delay the redirection to /dashboard by 1 second (1000 milliseconds)
-      setTimeout(() => {
+      // After successful login, the user state in the context will be updated
+      // Check if the user is authenticated and navigate to /dashboard immediately
+      if (user) {
         navigate("/dashboard");
-      }, 1000);
+      }
     } catch (error) {
-      if (error) console.log("Error on login: ", error.message);
+      console.error("Error on login: ", error.message);
     }
   };
 
