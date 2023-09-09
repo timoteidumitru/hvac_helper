@@ -9,7 +9,7 @@ const NavBar = () => {
 
   const handleLogout = () => {
     logout(); // Call the logout function from the context
-    navigate("/"); // Redirect to the login page after logging out
+    navigate("/login"); // Redirect to the login page after logging out
   };
 
   return (
@@ -28,7 +28,7 @@ const NavBar = () => {
             </Button>
           </div>
         ) : (
-          <Button color="inherit" onClick={() => navigate("/")}>
+          <Button color="inherit" onClick={() => navigate("/login")}>
             Login
           </Button>
         )}
