@@ -38,9 +38,8 @@ const LoginForm = () => {
 
       // After successful login, the user state in the context will be updated
       // Check if the user is authenticated and navigate to /dashboard immediately
-      if (user) {
-        navigate("/dashboard");
-      }
+
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error on login: ", error.message);
     }
@@ -97,6 +96,7 @@ const LoginForm = () => {
           color="primary"
           fullWidth
           style={{ marginTop: "16px" }}
+          onClick={handleSubmit}
         >
           Login
         </Button>

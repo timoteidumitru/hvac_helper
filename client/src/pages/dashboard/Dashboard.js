@@ -1,49 +1,33 @@
 import React, { useState } from "react";
-import {
-  Container,
-  Typography,
-  Button,
-  Box,
-  Paper,
-  Tabs,
-  Tab,
-} from "@mui/material";
+import { Typography, Box, Paper, Tabs, Tab } from "@mui/material";
 import { useAuth } from "../../context/AuthContext"; // Import the useAuth hook
-import { useNavigate } from "react-router-dom";
+import NavBar from "../../components/navbar/Navbar";
 
 const Dashboard = () => {
-  const { user, logout } = useAuth(); // Access the user data and logout function from the context
-  const navigate = useNavigate();
+  const classes = useStyles();
+  const { user } = useAuth(); // Access the user data and logout function from the context
   const [activeTab, setActiveTab] = useState(0);
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
 
-  const handleLogout = () => {
-    // Call the logout function from the context
-    logout();
-    // Navigate back to the login page after logging out
-    navigate("/login");
-  };
-
   return (
-    <Container maxWidth="md">
-      <Typography variant="h4" align="center" style={{ margin: "16px 0" }}>
+    <div className={classes.dashboardContainer}>
+      <NavBar />
+      <Typography variant="h4" align="center">
         Welcome to the Dashboard
       </Typography>
 
       {user && (
         <div>
-          <Typography variant="h6" gutterBottom>
-            Hello, {user?.fullName.split(" ")[0]}!
-          </Typography>
           <Paper square>
             <Tabs
               value={activeTab}
               indicatorColor="primary"
               textColor="primary"
               onChange={handleTabChange}
+              style={classes.centeredTabs} // Apply the custom style to center the tabs
             >
               <Tab label="Today" />
               <Tab label="Weekly" />
@@ -69,8 +53,19 @@ const Dashboard = () => {
           </Box>
         </div>
       )}
-    </Container>
+    </div>
   );
 };
 
 export default Dashboard;
+
+const useStyles = () => ({
+  dashboardContainer: {
+    margin: 0, // Remove the default margin
+    padding: 0, // Optionally, remove padding if needed
+  },
+  centeredTabs: {
+    display: "flex",
+    justifyContent: "space-around", // Update to "space-around" to evenly space the tabs
+  },
+});
