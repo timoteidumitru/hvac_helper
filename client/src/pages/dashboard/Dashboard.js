@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../../App.css";
 import {
   Typography,
   Drawer,
@@ -8,6 +9,7 @@ import {
   ListItemIcon,
   Tabs,
   Tab,
+  Avatar,
 } from "@mui/material";
 import NavBar from "../../components/navbar/Navbar";
 import {
@@ -16,10 +18,14 @@ import {
   CalendarToday as CalendarIcon,
   Settings as SettingsIcon,
 } from "@mui/icons-material"; // Import icons from Material-UI
+import { useAuth } from "../../context/AuthContext"; // Import the useAuth hook
+import CircularProgress from "./CircularProgressBar"; // Import the new circular progress bar component
 
 const Dashboard = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState(0); // Track the current tab index
+  const { user } = useAuth(); // Access the login function and user data
+  const progressValue = 38; // Set the desired progress value here
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -53,7 +59,7 @@ const Dashboard = () => {
       >
         <List>
           {menuItems.map((item, index) => (
-            <ListItem button key={index}>
+            <ListItem key={index}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.label} />
             </ListItem>
@@ -61,9 +67,32 @@ const Dashboard = () => {
         </List>
       </Drawer>
       <main>
-        <Typography variant="h4" align="center">
-          Welcome to the Dashboard
-        </Typography>
+        {/* User Avatar and Welcome Text */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginBottom: "20px",
+            marginTop: "20px",
+          }}
+        >
+          <Avatar
+            alt={user?.fullName.split(" ")[0]}
+            src={user?.avatarUrl} // Replace with the actual user's avatar URL
+            sx={{
+              width: 100,
+              height: 100,
+              marginBottom: "5px",
+            }}
+          />
+          <Typography variant="h6">
+            Welcome {user?.fullName.split(" ")[0]}
+          </Typography>
+          <Typography variant="subtitle2" color={"green"}>
+            Admin
+          </Typography>
+        </div>
 
         {/* Switch Tabs */}
         <Tabs
@@ -82,13 +111,13 @@ const Dashboard = () => {
         <div>
           {/* You can add content specific to each tab here */}
           {currentTab === 0 && (
-            <Typography variant="h6">Content for Today</Typography>
+            <CircularProgress progressValue={progressValue} />
           )}
           {currentTab === 1 && (
-            <Typography variant="h6">Content for This Week</Typography>
+            <CircularProgress progressValue={progressValue} />
           )}
           {currentTab === 2 && (
-            <Typography variant="h6">Content for Pay Period</Typography>
+            <CircularProgress progressValue={progressValue} />
           )}
         </div>
       </main>
