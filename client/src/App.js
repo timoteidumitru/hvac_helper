@@ -17,23 +17,17 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route exact path="/" element={<Home />} />
         <Route
           path="/"
-          element={
-            user ? (
-              <Dashboard /> ? (
-                <Home />
-              ) : (
-                <Navigate to="/login" />
-              )
-            ) : (
-              <Home />
-            )
-          }
+          element={user ? <Dashboard /> : <Navigate to="/login" />}
         />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+        <Route
+          path="/register"
+          element={user ? <Navigate to="/" /> : <Register />}
+        />
       </Routes>
     </Router>
   );

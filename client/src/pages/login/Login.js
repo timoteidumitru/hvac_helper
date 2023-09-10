@@ -12,7 +12,7 @@ import { useNavigate, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext"; // Import the useAuth hook
 
 const LoginForm = () => {
-  const { login, user } = useAuth(); // Access the login function and user data
+  const { login } = useAuth(); // Access the login function and user data
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -38,7 +38,6 @@ const LoginForm = () => {
 
       // After successful login, the user state in the context will be updated
       // Check if the user is authenticated and navigate to /dashboard immediately
-
       navigate("/dashboard");
     } catch (error) {
       console.error("Error on login: ", error.message);

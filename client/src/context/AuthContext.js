@@ -9,7 +9,6 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // Store user data here if authenticated
-  const [isLoading, setIsLoading] = useState(true);
 
   // Check for a stored user in localStorage when the component mounts
   useEffect(() => {
@@ -19,13 +18,9 @@ export const AuthProvider = ({ children }) => {
       // If a user is found in localStorage, parse and set it as the authenticated user
       setUser(JSON.parse(storedUser));
     }
-
-    setIsLoading(false);
-  }, [isLoading]);
+  }, []);
 
   const login = async (email, password) => {
-    setIsLoading(true);
-
     try {
       const response = await axios.post("/user/auth", { email, password });
       setUser(response.data);
@@ -35,8 +30,6 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error("Error on login: ", error.message);
     }
-
-    setIsLoading(false);
   };
 
   const logout = () => {
@@ -46,7 +39,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

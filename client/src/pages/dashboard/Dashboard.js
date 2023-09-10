@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import {
   Typography,
-  Paper,
-  Tabs,
-  Tab,
-  Box,
   Drawer,
   List,
   ListItem,
   ListItemText,
   ListItemIcon,
+  Tabs,
+  Tab,
 } from "@mui/material";
-import { useAuth } from "../../context/AuthContext"; // Import the useAuth hook
 import NavBar from "../../components/navbar/Navbar";
 import {
   Home as HomeIcon,
@@ -21,14 +18,8 @@ import {
 } from "@mui/icons-material"; // Import icons from Material-UI
 
 const Dashboard = () => {
-  const classes = useStyles();
-  const { user } = useAuth(); // Access the user data and logout function from the context
-  const [activeTab, setActiveTab] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-  };
+  const [currentTab, setCurrentTab] = useState(0); // Track the current tab index
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -41,8 +32,15 @@ const Dashboard = () => {
     { label: "Settings", icon: <SettingsIcon /> },
   ];
 
+  const switchTabs = ["Today", "This Week", "Pay Period"];
+
+  // Function to handle tab change
+  const handleTabChange = (event, newValue) => {
+    setCurrentTab(newValue);
+  };
+
   return (
-    <div className={classes.dashboardContainer}>
+    <div>
       <NavBar toggleDrawer={toggleDrawer} />
       <Drawer
         anchor="left"
@@ -62,61 +60,40 @@ const Dashboard = () => {
           ))}
         </List>
       </Drawer>
-      <main className={classes.content}>
+      <main>
         <Typography variant="h4" align="center">
           Welcome to the Dashboard
         </Typography>
-        {user && (
-          <div>
-            <Paper square>
-              <Tabs
-                value={activeTab}
-                indicatorColor="primary"
-                textColor="primary"
-                onChange={handleTabChange}
-                style={classes.centeredTabs}
-              >
-                <Tab label="Today" />
-                <Tab label="Weekly" />
-                <Tab label="Monthly" />
-              </Tabs>
-            </Paper>
-            <Box mt={2}>
-              {activeTab === 0 && (
-                <Typography variant="body1" paragraph>
-                  Content for Today
-                </Typography>
-              )}
-              {activeTab === 1 && (
-                <Typography variant="body1" paragraph>
-                  Content for Weekly
-                </Typography>
-              )}
-              {activeTab === 2 && (
-                <Typography variant="body1" paragraph>
-                  Content for Monthly
-                </Typography>
-              )}
-            </Box>
-          </div>
-        )}
+
+        {/* Switch Tabs */}
+        <Tabs
+          value={currentTab}
+          onChange={handleTabChange}
+          indicatorColor="primary"
+          textColor="primary"
+          centered
+        >
+          {switchTabs.map((tabLabel, index) => (
+            <Tab label={tabLabel} key={index} />
+          ))}
+        </Tabs>
+
+        {/* Content for the selected tab */}
+        <div>
+          {/* You can add content specific to each tab here */}
+          {currentTab === 0 && (
+            <Typography variant="h6">Content for Today</Typography>
+          )}
+          {currentTab === 1 && (
+            <Typography variant="h6">Content for This Week</Typography>
+          )}
+          {currentTab === 2 && (
+            <Typography variant="h6">Content for Pay Period</Typography>
+          )}
+        </div>
       </main>
     </div>
   );
 };
 
 export default Dashboard;
-
-const useStyles = () => ({
-  dashboardContainer: {
-    display: "flex",
-  },
-  content: {
-    flexGrow: 1,
-    padding: "20px",
-  },
-  centeredTabs: {
-    display: "flex",
-    justifyContent: "space-around",
-  },
-});
