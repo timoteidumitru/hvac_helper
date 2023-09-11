@@ -56,3 +56,4 @@ npm run start -> will start server for client side on: http://localhost:3000
 - Adding ContextAPI as state management
 - Persist user through refresh page make use of localStorage
 - Implement drawer on Dashboard
+- Made CircularProgresBar as reusable component for dashboard page

@@ -10,6 +10,11 @@ import {
   Tabs,
   Tab,
   Avatar,
+  Button,
+  createTheme,
+  ThemeProvider,
+  TextField,
+  Grid,
 } from "@mui/material";
 import NavBar from "../../components/navbar/Navbar";
 import {
@@ -21,11 +26,15 @@ import {
 import { useAuth } from "../../context/AuthContext"; // Import the useAuth hook
 import CircularProgress from "./CircularProgressBar"; // Import the new circular progress bar component
 
+const theme = createTheme(); // Create a theme instance
+
 const Dashboard = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState(0); // Track the current tab index
+  const [clockedIn, setClockedIn] = useState(false); // Track clock in/out state
   const { user } = useAuth(); // Access the login function and user data
-  const progressValue = 38; // Set the desired progress value here
+  let [progressValue, setProgressValue] = useState(38); // Set the initial progress value here
+  const [overtimeHours, setOvertimeHours] = useState(0); // State for overtime hours input
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -45,83 +54,126 @@ const Dashboard = () => {
     setCurrentTab(newValue);
   };
 
+  // Function to handle clock in/out button click
+  const handleClockInOut = () => {
+    // Add 9 to progressValue if clocked in, subtract 9 if clocked out
+    setProgressValue(clockedIn ? progressValue - 9 : progressValue + 9);
+    setClockedIn(!clockedIn);
+  };
+
+  // Function to handle overtime submission
+  const handleSubmitOvertime = () => {
+    const overtimeValue = parseFloat(overtimeHours);
+    if (!isNaN(overtimeValue)) {
+      // Check if the entered value is a valid number
+      const updatedProgressValue = progressValue + overtimeValue * 1.5;
+      setProgressValue(updatedProgressValue);
+    }
+  };
+
   return (
-    <div>
-      <NavBar toggleDrawer={toggleDrawer} />
-      <Drawer
-        anchor="left"
-        open={drawerOpen}
-        onClose={toggleDrawer}
-        variant="temporary"
-        ModalProps={{
-          keepMounted: true,
-        }}
-      >
-        <List>
-          {menuItems.map((item, index) => (
-            <ListItem key={index}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.label} />
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-      <main>
-        {/* User Avatar and Welcome Text */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            marginBottom: "20px",
-            marginTop: "20px",
+    <ThemeProvider theme={theme}>
+      <div>
+        <NavBar toggleDrawer={toggleDrawer} />
+        <Drawer
+          anchor="left"
+          open={drawerOpen}
+          onClose={toggleDrawer}
+          variant="temporary"
+          ModalProps={{
+            keepMounted: true,
           }}
         >
-          <Avatar
-            alt={user?.fullName.split(" ")[0]}
-            src={user?.avatarUrl} // Replace with the actual user's avatar URL
-            sx={{
-              width: 100,
-              height: 100,
-              marginBottom: "5px",
+          <List>
+            {menuItems.map((item, index) => (
+              <ListItem key={index}>
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.label} />
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
+        <main>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginBottom: "20px",
+              marginTop: "20px",
             }}
-          />
-          <Typography variant="h6">
-            Welcome {user?.fullName.split(" ")[0]}
-          </Typography>
-          <Typography variant="subtitle2" color={"green"}>
-            Admin
-          </Typography>
-        </div>
+          >
+            <Avatar
+              alt={user?.fullName.split(" ")[0]}
+              src={user?.avatarUrl}
+              sx={{
+                width: 120,
+                height: 120,
+                marginBottom: "10px",
+              }}
+            />
+            <Typography variant="h6">
+              Welcome {user?.fullName.split(" ")[0]}
+            </Typography>
+            <Typography variant="subtitle2" color={"green"}>
+              Admin
+            </Typography>
+          </div>
 
-        {/* Switch Tabs */}
-        <Tabs
-          value={currentTab}
-          onChange={handleTabChange}
-          indicatorColor="primary"
-          textColor="primary"
-          centered
-        >
-          {switchTabs.map((tabLabel, index) => (
-            <Tab label={tabLabel} key={index} />
-          ))}
-        </Tabs>
+          <Tabs
+            value={currentTab}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            centered
+          >
+            {switchTabs.map((tabLabel, index) => (
+              <Tab label={tabLabel} key={index} />
+            ))}
+          </Tabs>
 
-        {/* Content for the selected tab */}
-        <div>
-          {/* You can add content specific to each tab here */}
-          {currentTab === 0 && (
-            <CircularProgress progressValue={progressValue} />
-          )}
-          {currentTab === 1 && (
-            <CircularProgress progressValue={progressValue} />
-          )}
-          {currentTab === 2 && (
-            <CircularProgress progressValue={progressValue} />
-          )}
-        </div>
-      </main>
-    </div>
+          <div style={{ textAlign: "center" }}>
+            {currentTab === 0 && (
+              <div>
+                <CircularProgress progressValue={progressValue} />
+                <Button
+                  variant="contained"
+                  color={clockedIn ? "secondary" : "primary"}
+                  size="large"
+                  onClick={handleClockInOut}
+                  style={{ marginTop: "20px" }}
+                >
+                  {clockedIn ? "Clock Out" : "Clock In"}
+                </Button>
+                <Grid container spacing={2} style={{ marginTop: "20px" }}>
+                  <Grid item xs={6}>
+                    <TextField
+                      type="number"
+                      label="Overtime hours"
+                      variant="outlined"
+                      fullWidth
+                      value={overtimeHours}
+                      onChange={(e) => setOvertimeHours(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      onClick={handleSubmitOvertime}
+                      fullWidth
+                    >
+                      Submit
+                    </Button>
+                  </Grid>
+                </Grid>
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+    </ThemeProvider>
   );
 };
 
