@@ -33,7 +33,11 @@ const Dashboard = () => {
   const [currentTab, setCurrentTab] = useState(0); // Track the current tab index
   const [clockedIn, setClockedIn] = useState(false); // Track clock in/out state
   const { user } = useAuth(); // Access the login function and user data
-  let [progressValue, setProgressValue] = useState(38); // Set the initial progress value here
+  let [progressValue, setProgressValue] = useState({
+    daily: 9,
+    weekly: 32,
+    payCheck: 72,
+  }); // Set the initial progress value here
   const [overtimeHours, setOvertimeHours] = useState(0); // State for overtime hours input
 
   const toggleDrawer = () => {
@@ -135,7 +139,7 @@ const Dashboard = () => {
           <div style={{ textAlign: "center" }}>
             {currentTab === 0 && (
               <div>
-                <CircularProgress progressValue={progressValue} />
+                <CircularProgress progressValue={progressValue.daily} />
                 <Button
                   variant="contained"
                   color={clockedIn ? "secondary" : "primary"}
@@ -168,6 +172,16 @@ const Dashboard = () => {
                     </Button>
                   </Grid>
                 </Grid>
+              </div>
+            )}
+            {currentTab === 1 && (
+              <div>
+                <CircularProgress progressValue={progressValue.weekly} />
+              </div>
+            )}
+            {currentTab === 2 && (
+              <div>
+                <CircularProgress progressValue={progressValue.payCheck} />
               </div>
             )}
           </div>
