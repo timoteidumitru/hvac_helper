@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { config } from './config/config';
 import Logging from './library/Logging';
 import userRoutes from './routes/User.route';
+import timesheetRoutes from './routes/Timesheet.route';
 
 const router = express();
 // Connect to Mongo
@@ -52,6 +53,7 @@ const StartServer = () => {
 
   // Routes
   router.use('/user', userRoutes);
+  router.use('/timesheet', timesheetRoutes);
 
   // Healthcheck */
   router.get('/ping', (req, res, next) => res.status(200).json({ hello: 'is alive..' }));
