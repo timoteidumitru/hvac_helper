@@ -22,13 +22,11 @@ export const Schemas = {
   user: {
     create: Joi.object<TimesheetDocument>({
       employeeId: Joi.string().required(),
-      datesWorked: Joi.array().required(),
-      dueDate: Joi.string().required()
+      entries: Joi.array().required()
     }),
     validate: Joi.object<TimesheetDocument>({
       employeeId: Joi.string().required(),
-      datesWorked: Joi.array().required(),
-      dueDate: Joi.string().required()
+      entries: Joi.array().required()
     })
   }
 };

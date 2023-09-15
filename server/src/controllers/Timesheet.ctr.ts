@@ -1,35 +1,49 @@
 import { Request, Response } from 'express';
 import { Timesheet } from '../models/Timesheet.model';
 
-// create new timesheet
-const newTimesheet = async (req: Request, res: Response) => {
-  const { timesheetID } = req.body;
+// get all entries from a user
+const getTimesheet = async (req: Request, res: Response) => {
+  const { userId } = req.body;
 
   try {
-    // Check if required fields are provided
-    if (!timesheetID) {
-      return res.status(400).json({ message: 'TimesheetID is required.' });
+    const timesheet = await Timesheet.findOne({ userId });
+
+    if (!timesheet) {
+      res.status(404).json({ error: 'Timesheet not found' });
+    } else {
+      res.json(timesheet.entries);
     }
-
-    // Check if the user with the same email already exists
-    const existingTimesheet = await Timesheet.findOne({ timesheetID });
-    if (existingTimesheet) {
-      return res.status(409).json({ message: 'Timesheet already created.' });
-    }
-
-    // Create a new user instance
-    const timesheet = new Timesheet({
-      timesheetID
-    });
-
-    // Save the user to the database
-    await timesheet.save();
-
-    // Respond with a success message and user data
-    return res.status(201).json({ message: 'Timesheet created successfully', timesheet });
-  } catch (error) {
-    return res.status(500).json({ message: error });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-export default { newTimesheet };
+// create new timesheet
+const newTimesheet = async (req: Request, res: Response) => {
+  const { userId, date, hoursWorked, project } = req.body;
+
+  try {
+    const timesheet = await Timesheet.findOne({ userId });
+
+    if (!timesheet) {
+      // Create a new timesheet if one doesn't exist for the employee
+      const newTimesheet = new Timesheet({
+        userId,
+        entries: [{ date, hoursWorked, project }]
+      });
+      await newTimesheet.save();
+      res.status(201).json(newTimesheet);
+    } else {
+      // Add an entry to the existing timesheet
+      timesheet.entries.push({ date, hoursWorked, project });
+      await timesheet.save();
+      res.status(201).json(timesheet);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export default { getTimesheet, newTimesheet };
