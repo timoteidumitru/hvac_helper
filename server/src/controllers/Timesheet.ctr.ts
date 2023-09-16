@@ -20,7 +20,7 @@ const getTimesheet = async (req: Request, res: Response) => {
 };
 
 // create new timesheet
-const newTimesheet = async (req: Request, res: Response) => {
+const postTimesheet = async (req: Request, res: Response) => {
   const { userId, date, hoursWorked, project } = req.body;
 
   try {
@@ -46,4 +46,4 @@ const newTimesheet = async (req: Request, res: Response) => {
   }
 };
 
-export default { getTimesheet, newTimesheet };
+export default { getTimesheet, postTimesheet };

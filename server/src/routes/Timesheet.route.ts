@@ -5,6 +5,6 @@ const router = express.Router();
 
 // requests response to client
 router.get('/get', controller.getTimesheet);
-router.post('/new', controller.newTimesheet);
+router.post('/post', controller.postTimesheet);
 
 export = router;

@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 
 const timesheetSchema = new mongoose.Schema({
-  employeeId: String, // Add an identifier for the employee if needed
   entries: [
     {
       date: Date,
@@ -16,7 +15,6 @@ const timesheetSchema = new mongoose.Schema({
 });
 
 export interface TimesheetDocument extends mongoose.Document {
-  employeeId: String; // Add an identifier for the employee if needed
   entries: [
     {
       date: Date;

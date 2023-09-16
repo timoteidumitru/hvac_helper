@@ -21,11 +21,11 @@ export const ValidateJoi = (schema: ObjectSchema) => {
 export const Schemas = {
   user: {
     create: Joi.object<TimesheetDocument>({
-      employeeId: Joi.string().required(),
+      userId: Joi.string().required(),
       entries: Joi.array().required()
     }),
     validate: Joi.object<TimesheetDocument>({
-      employeeId: Joi.string().required(),
+      userId: Joi.string().required(),
       entries: Joi.array().required()
     })
   }
