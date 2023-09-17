@@ -5,6 +5,7 @@ const timesheetSchema = new mongoose.Schema({
     {
       date: Date,
       hoursWorked: Number,
+      overtime: Number,
       project: String
     }
   ],
@@ -19,6 +20,7 @@ export interface TimesheetDocument extends mongoose.Document {
     {
       date: Date;
       hoursWorked: Number;
+      overtime: Number;
       project: String;
     }
   ];

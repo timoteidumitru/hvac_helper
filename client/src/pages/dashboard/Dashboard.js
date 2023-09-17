@@ -13,7 +13,6 @@ import { useAuth } from "../../context/AuthContext"; // Import the useAuth hook
 import TodayTab from "./TodayTab";
 import ThisWeekTab from "./ThisWeekTab";
 import PayPeriodTab from "./PayPeriodTab";
-import Menu from "./Menu";
 
 const theme = createTheme(); // Create a theme instance
 
@@ -37,7 +36,6 @@ const Dashboard = () => {
     <ThemeProvider theme={theme}>
       <div>
         <NavBar toggleDrawer={toggleDrawer} />
-        <Menu isOpen={isDrawerOpen} onClose={toggleDrawer} />
         <main>
           <div
             style={{

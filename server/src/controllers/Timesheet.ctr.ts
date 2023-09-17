@@ -21,7 +21,7 @@ const getTimesheet = async (req: Request, res: Response) => {
 
 // create new timesheet
 const postTimesheet = async (req: Request, res: Response) => {
-  const { userId, date, hoursWorked, project } = req.body;
+  const { userId, date, hoursWorked, overtime, project } = req.body;
 
   try {
     const timesheet = await Timesheet.findOne({ userId });
@@ -36,7 +36,7 @@ const postTimesheet = async (req: Request, res: Response) => {
       res.status(201).json(newTimesheet);
     } else {
       // Add an entry to the existing timesheet
-      timesheet.entries.push({ date, hoursWorked, project });
+      timesheet.entries.push({ date, hoursWorked, overtime, project });
       await timesheet.save();
       res.status(201).json(timesheet);
     }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { TextField, Grid, Button } from "@mui/material";
+import { Typography, Grid, Button, Box, TextField } from "@mui/material";
 import CircularProgress from "./CircularProgressBar";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const TodayTab = () => {
   const [clockedIn, setClockedIn] = useState(false); // Track clock in/out state
@@ -22,21 +23,56 @@ const TodayTab = () => {
     }
   };
 
+  // Function to clear the overtimeHours field on focus
+  const handleOvertimeHoursFocus = () => {
+    setOvertimeHours("");
+  };
+
   return (
     <div>
       {clockedIn ? (
         <div>
-          <TextField
-            disabled
-            fullWidth
-            label={`You clocked in for today! ${new Date().toLocaleDateString()}`}
-          />
+          <Typography
+            variant="h6"
+            style={{
+              marginTop: "20px",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            You have clocked in for today!
+          </Typography>
+          <Typography
+            variant="h6"
+            style={{
+              margin: "10px",
+              display: "flex",
+              justifyContent: "center",
+              color: "green",
+              fontWeight: 700,
+            }}
+          >
+            {new Date().toLocaleDateString()}
+          </Typography>
         </div>
       ) : (
         <div>
-          <CircularProgress progressValue={progressValue} maxValue={14} />
-          <Grid container spacing={2} style={{ marginTop: "20px" }}>
-            <Grid item xs={6}>
+          <CircularProgress progressValue={progressValue} maxValue={12} />
+          <Grid
+            container
+            spacing={2}
+            style={{ marginTop: "20px", padding: "10px" }}
+          >
+            <Grid item xs={12}>
+              <Typography variant="body1">
+                Is there any overtime you want to add?
+              </Typography>
+            </Grid>
+            <Grid
+              item
+              xs={9}
+              style={{ display: "flex", justifyContent: "center" }}
+            >
               <TextField
                 type="number"
                 label="Overtime hours"
@@ -44,30 +80,39 @@ const TodayTab = () => {
                 fullWidth
                 value={overtimeHours}
                 onChange={(e) => setOvertimeHours(e.target.value)}
+                onFocus={handleOvertimeHoursFocus}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={3} style={{ display: "flex", alignItems: "center" }}>
               <Button
                 variant="contained"
                 color="primary"
                 size="large"
                 onClick={handleSubmitOvertime}
-                fullWidth
+                style={{
+                  borderRadius: "50px",
+                  width: "50px",
+                  height: "50px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
               >
-                Submit
+                <ChevronRightIcon />
               </Button>
             </Grid>
           </Grid>
-          <Button
-            variant="contained"
-            color={clockedIn ? "secondary" : "primary"}
-            size="large"
-            onClick={handleClockInOut}
-            style={{ marginTop: "20px" }}
-            disabled={clockedIn}
-          >
-            {clockedIn ? "Clocked In" : "Clock In"}
-          </Button>
+          <Box display="flex" justifyContent="center" margin="20px">
+            <Button
+              variant="contained"
+              color={clockedIn ? "secondary" : "primary"}
+              size="large"
+              onClick={handleClockInOut}
+              disabled={clockedIn}
+            >
+              {clockedIn ? "Clocked In" : "Clock In"}
+            </Button>
+          </Box>
         </div>
       )}
     </div>
