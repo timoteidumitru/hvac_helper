@@ -52,8 +52,9 @@ npm run start -> will start server for client side on: http://localhost:3000
 - UI for login page
 - UI for register page
 - Basic of Routing system implementation
-- Build API for create/login user
+- Build API for register/login users
 - Adding ContextAPI as state management
 - Persist user through refresh page make use of localStorage
 - Implement drawer on Dashboard
 - Made CircularProgresBar as reusable component for dashboard page
+- Adding timesheet api
