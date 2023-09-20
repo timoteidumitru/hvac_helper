@@ -58,3 +58,4 @@ npm run start -> will start server for client side on: http://localhost:3000
 - Implement drawer on Dashboard
 - Made CircularProgresBar as reusable component for dashboard page
 - Adding timesheet api
+- Implement JavaScript Web Token for a more secure authentication and authorization.

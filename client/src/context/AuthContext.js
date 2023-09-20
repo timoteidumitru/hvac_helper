@@ -26,14 +26,13 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserData = async (authToken) => {
     try {
-      const response = await axios.get("/user/profile", {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
-
-      // Set the user data in the state
-      setUser(response.data);
+      // const response = await axios.get("/user/profile", {
+      //   headers: {
+      //     Authorization: `Bearer ${authToken}`,
+      //   },
+      // });
+      // // Set the user data in the state
+      // // setUser(response.data);
     } catch (error) {
       console.error("Error fetching user data: ", error.message);
     }
@@ -53,7 +52,7 @@ export const AuthProvider = ({ children }) => {
       setToken(authToken);
 
       // Fetch user data using the token
-      fetchUserData(authToken);
+      // fetchUserData(authToken);
     } catch (error) {
       console.error("Error on login: ", error.message);
     }
