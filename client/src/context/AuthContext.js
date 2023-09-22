@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "../api/axios"; // Import your Axios instance here
+import axios from "../api/axios";
 
 const AuthContext = createContext();
 
@@ -8,8 +8,8 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(null); // Store JWT token here if authenticated
-  const [user, setUser] = useState(null); // Store user data here if authenticated
+  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
 
   // Check for a stored token in localStorage when the component mounts
   useEffect(() => {
@@ -20,19 +20,15 @@ export const AuthProvider = ({ children }) => {
       setToken(storedToken);
 
       // Fetch user data using the token
-      fetchUserData(storedToken);
+      fetchUserData(user?.personal?.email);
     }
-  }, []);
+  }, [user?.personal?.email]);
 
-  const fetchUserData = async (authToken) => {
+  const fetchUserData = async (email) => {
     try {
-      // const response = await axios.get("/user/profile", {
-      //   headers: {
-      //     Authorization: `Bearer ${authToken}`,
-      //   },
-      // });
-      // // Set the user data in the state
-      // // setUser(response.data);
+      const response = await axios.get("/profile/get", {});
+      // Set the user data in the state
+      setUser(response?.data?.profile?.profileData);
     } catch (error) {
       console.error("Error fetching user data: ", error.message);
     }
@@ -51,8 +47,10 @@ export const AuthProvider = ({ children }) => {
       // Set the token state
       setToken(authToken);
 
-      // Fetch user data using the token
-      // fetchUserData(authToken);
+      // Fetch user data using the token and wait for it to complete
+      await fetchUserData(email);
+
+      // At this point, the user data should be available in the 'user' state
     } catch (error) {
       console.error("Error on login: ", error.message);
     }

@@ -18,8 +18,8 @@ const theme = createTheme(); // Create a theme instance
 
 const Dashboard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [currentTab, setCurrentTab] = useState(0); // Track the current tab index
-  const { user } = useAuth(); // Access the login function and user data
+  const [currentTab, setCurrentTab] = useState(0);
+  const { user } = useAuth();
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
@@ -47,8 +47,8 @@ const Dashboard = () => {
             }}
           >
             <Avatar
-              alt={user?.fullName.split(" ")[0]}
-              src={user?.avatarUrl}
+              alt={user?.personal?.firstName}
+              src={user?.personal?.firstName}
               sx={{
                 width: 120,
                 height: 120,
@@ -56,10 +56,10 @@ const Dashboard = () => {
               }}
             />
             <Typography variant="h6">
-              Welcome {user?.fullName.split(" ")[0]}
+              Welcome {user?.personal?.firstName}
             </Typography>
             <Typography variant="subtitle2" color={"green"}>
-              Admin
+              {user?.possition?.role}
             </Typography>
           </div>
 

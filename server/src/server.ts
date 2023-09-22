@@ -1,5 +1,6 @@
 import express from 'express';
 import http from 'http';
+import path from 'path';
 import mongoose from 'mongoose';
 import { config } from './config/config';
 import Logging from './library/Logging';
@@ -38,6 +39,8 @@ const StartServer = () => {
   // middlewhere
   router.use(express.urlencoded({ extended: true }));
   router.use(express.json());
+  // Serve static assets (e.g., CSS, JS, images)
+  router.use(express.static(path.join(__dirname, 'public')));
 
   /** Rules of our API */
   router.use((req, res, next) => {
@@ -56,6 +59,11 @@ const StartServer = () => {
   router.use('/user', userRoutes);
   router.use('/profile', profileRoutes);
   router.use('/timesheet', timesheetRoutes);
+
+  // Serve the main HTML file for all routes
+  router.use('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  });
 
   // Healthcheck */
   router.get('/ping', (req, res, next) => res.status(200).json({ hello: 'is alive..' }));
