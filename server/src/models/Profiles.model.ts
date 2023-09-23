@@ -18,7 +18,7 @@ const profileSchema = new mongoose.Schema({
       sortCode: Number,
       account: Number
     },
-    possition: {
+    position: {
       role: String,
       dateStart: Date
     }
@@ -43,7 +43,7 @@ export interface ProfileDocument extends mongoose.Document {
       sortCode: number;
       account: number;
     };
-    possition: {
+    position: {
       role: string;
       dateStart: Date;
     };

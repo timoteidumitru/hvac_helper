@@ -13,6 +13,7 @@ import Home from "./pages/home/Home";
 import Delivery from "./pages/delivery/Delivery";
 import Orders from "./pages/orders/Orders";
 import Timesheet from "./pages/timesheet/Timesheet";
+import UserProfile from "./pages/profile/UserProfile";
 
 function App() {
   const { token } = useAuth(); // Access the token from AuthContext
@@ -33,6 +34,10 @@ function App() {
         <Route
           path="/dashboard"
           element={token ? <Dashboard /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/account"
+          element={token ? <UserProfile /> : <Navigate to="/login" />}
         />
         <Route
           path="/delivery"

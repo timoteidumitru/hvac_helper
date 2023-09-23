@@ -54,7 +54,7 @@ const updateProfile = async (req: Request, res: Response) => {
     }
     if (profileData.possition) {
       // Update possition information
-      Object.assign(foundUserProfile.profileData.possition, profileData.possition);
+      Object.assign(foundUserProfile.profileData.position, profileData.position);
     }
 
     // Save the updated profile
