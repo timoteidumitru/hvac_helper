@@ -59,7 +59,7 @@ const Dashboard = () => {
               Welcome {user?.personal?.firstName}
             </Typography>
             <Typography variant="subtitle2" color={"green"}>
-              {user?.possition?.role}
+              {user?.position?.role}
             </Typography>
           </div>
 

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "../api/axios";
+import jwt_decode from "jwt-decode"; // Import jwt-decode library
 
 const AuthContext = createContext();
 
@@ -19,14 +20,49 @@ export const AuthProvider = ({ children }) => {
       // If a token is found in localStorage, set it as the authenticated token
       setToken(storedToken);
 
-      // Fetch user data using the token
-      fetchUserData(user?.personal?.email);
+      // Decode the JWT token to get the email
+      const decodedToken = jwt_decode(storedToken);
+      const email = decodedToken.email;
+
+      // Fetch user data using the email
+      fetchUserData(email);
     }
-  }, [user?.personal?.email]);
+  }, []);
 
   const fetchUserData = async (email) => {
     try {
-      const response = await axios.get("/profile/get", {});
+      if (token) {
+        // If login fails, make a POST request to /profile/register with dummy data
+        const dummyUserData = {
+          email: email,
+          profileData: {
+            personal: {
+              firstName: "John",
+              lastName: "Doe",
+              phone: 1234567890,
+              email: email,
+              address: "123 Main Street, City",
+            },
+            nextOfKin: {
+              name: "Jane Doe",
+              phone: 9876543210,
+            },
+            bankDetails: {
+              institute: "ABC Bank",
+              sortCode: 112233,
+              account: 987654321,
+            },
+            position: {
+              role: "Software Engineer",
+              dateStart: "2023-01-15",
+            },
+          },
+        };
+        await axios.post("/profile/register", dummyUserData);
+        console.log("Dummy user data created successfully.");
+      }
+
+      const response = await axios.get(`/profile/get`);
       // Set the user data in the state
       setUser(response?.data?.profile?.profileData);
     } catch (error) {
@@ -38,19 +74,19 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post("/user/auth", { email, password });
 
-      // Assuming the backend returns a JWT token upon successful login
-      const { token: authToken } = response.data;
+      if (response.status === 200) {
+        // Successful login, continue as usual
+        const { token: authToken } = response.data;
+        localStorage.setItem("authToken", authToken);
 
-      // Store the token in localStorage upon successful login
-      localStorage.setItem("authToken", authToken);
-
-      // Set the token state
-      setToken(authToken);
-
-      // Fetch user data using the token and wait for it to complete
-      await fetchUserData(email);
-
-      // At this point, the user data should be available in the 'user' state
+        setToken(authToken);
+        await fetchUserData(email);
+      } else if (response.status === 401) {
+        console.log("Unauthorised request!");
+      } else {
+        // Handle other error cases here
+        console.error("Error on login: ", response.data.message);
+      }
     } catch (error) {
       console.error("Error on login: ", error.message);
     }

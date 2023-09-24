@@ -19,7 +19,7 @@ import {
 import MenuList from "./MenuList"; // Import the MenuList component
 
 const NavBar = () => {
-  const { user, logout } = useAuth();
+  const { token, user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation(); // Get the current location
 
@@ -62,7 +62,7 @@ const NavBar = () => {
           <Typography variant="h6" align="center" color="white">
             {location.pathname.split("/")[1].toUpperCase()}
           </Typography>
-          {user ? (
+          {token ? (
             <div>
               <IconButton
                 color="inherit"
@@ -73,8 +73,8 @@ const NavBar = () => {
                 style={{ width: "42px", height: "42px" }}
               >
                 <Avatar
-                  src={user.avatarUrl}
-                  alt={user.fullName}
+                  src={user?.personal?.firstName}
+                  alt={user?.personal?.firstName}
                   style={{ width: "100%", height: "100%" }}
                 />
               </IconButton>

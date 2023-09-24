@@ -52,12 +52,12 @@ const updateProfile = async (req: Request, res: Response) => {
       // Update bankDetails information
       Object.assign(foundUserProfile.profileData.bankDetails, profileData.bankDetails);
     }
-    if (profileData.possition) {
-      // Update possition information
+    if (profileData.position) {
+      // Update position information (corrected typo)
       Object.assign(foundUserProfile.profileData.position, profileData.position);
     }
 
-    // Save the updated profile
+    // Save the updated profile using the instance's save method
     await foundUserProfile.save();
 
     // Respond with a success message and the updated user data
