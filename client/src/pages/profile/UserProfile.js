@@ -115,7 +115,7 @@ const UserProfile = () => {
   const handleSave = () => {
     // Construct the data object to send in the PUT request
     const updatedData = {
-      email: user.personal.email,
+      email: user?.personal?.email || "",
       profileData: {
         personal: editedPersonal,
         nextOfKin: editedNextOfKin,

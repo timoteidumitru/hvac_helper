@@ -31,40 +31,42 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserData = async (email) => {
     try {
-      if (token) {
-        // If login fails, make a POST request to /profile/register with dummy data
-        const dummyUserData = {
-          email: email,
-          profileData: {
-            personal: {
-              firstName: "John",
-              lastName: "Doe",
-              phone: 1234567890,
-              email: email,
-              address: "123 Main Street, City",
-            },
-            nextOfKin: {
-              name: "Jane Doe",
-              phone: 9876543210,
-            },
-            bankDetails: {
-              institute: "ABC Bank",
-              sortCode: 112233,
-              account: 987654321,
-            },
-            position: {
-              role: "Software Engineer",
-              dateStart: "2023-01-15",
-            },
+      // If login fails, make a POST request to /profile/register with dummy data
+      const dummyUserData = {
+        email: email,
+        profileData: {
+          personal: {
+            firstName: "John",
+            lastName: "Doe",
+            phone: 1234567890,
+            email: email,
+            address: "123 Main Street, City",
           },
-        };
+          nextOfKin: {
+            name: "Jane Doe",
+            phone: 9876543210,
+          },
+          bankDetails: {
+            institute: "ABC Bank",
+            sortCode: 112233,
+            account: 987654321,
+          },
+          position: {
+            role: "Software Engineer",
+            dateStart: "2023-01-15",
+          },
+        },
+      };
+      if (token) {
         await axios.post("/profile/register", dummyUserData);
         console.log("Dummy user data created successfully.");
       }
 
       const response = await axios.get(`/profile/get`);
+      const userData = response?.data?.profile?.profileData;
+
       // Set the user data in the state
-      setUser(response?.data?.profile?.profileData);
+      setUser(userData ? userData : dummyUserData);
     } catch (error) {
       console.error("Error fetching user data: ", error.message);
     }
