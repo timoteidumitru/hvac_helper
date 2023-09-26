@@ -5,7 +5,8 @@ import { User } from '../models/Users.model';
 // Create a function to generate JWT tokens
 function generateToken(user: any) {
   const payload = {
-    userId: user._id
+    userId: user._id,
+    email: user.email
     // You can add more user information to the payload if needed
   };
 
