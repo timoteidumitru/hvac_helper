@@ -55,15 +55,15 @@ export const AuthProvider = ({ children }) => {
         email: myEmail,
         profileData: {
           personal: {
-            firstName: "John",
-            lastName: "Doe",
-            phone: 1234567890,
+            firstName: "First Name",
+            lastName: "Last Name",
+            phone: 7598430650,
             email: myEmail,
-            address: "123 Main Street, City",
+            address: "Your home address",
           },
           nextOfKin: {
             name: "Jane Doe",
-            phone: 9876543210,
+            phone: 7876543210,
           },
           bankDetails: {
             institute: "ABC Bank",
@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
             account: 987654321,
           },
           position: {
-            role: "Software Engineer",
+            role: "Duct Fitter",
             dateStart: "2023-01-15",
           },
         },
