@@ -9,7 +9,7 @@ import {
   Tab,
 } from "@mui/material";
 import NavBar from "../../components/navbar/Navbar";
-import { useAuth } from "../../context/AuthContext"; // Import the useAuth hook
+import { useAuth } from "../../context/AuthContext";
 import TodayTab from "./TodayTab";
 import ThisWeekTab from "./ThisWeekTab";
 import PayPeriodTab from "./PayPeriodTab";

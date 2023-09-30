@@ -1,29 +1,140 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Grid, Button, Box, TextField } from "@mui/material";
+import jwt_decode from "jwt-decode";
 import CircularProgress from "./CircularProgressBar";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { useTimesheet } from "../../context/TimesheetProvider";
+import { useAuth } from "../../context/AuthContext";
 
 const TodayTab = () => {
-  const [clockedIn, setClockedIn] = useState(false); // Track clock in/out state
-  const [progressValue, setProgressValue] = useState(9); // Set the initial progress value here
-  const [overtimeHours, setOvertimeHours] = useState(0); // State for overtime hours input
+  const [clockedIn, setClockedIn] = useState(false);
+  const [progressValue, setProgressValue] = useState(0); // Initialize progressValue as 0
+  const [overtimeHours, setOvertimeHours] = useState(0);
 
-  // Function to handle clock in/out button click
+  const { updateTimesheetEntry, postTimesheet, getTimesheet, timesheet } =
+    useTimesheet();
+  const { token } = useAuth();
+
+  const decodedToken = jwt_decode(token);
+  const userId = decodedToken.userId;
+  const currentSite = "70 Chancery Lane";
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  useEffect(() => {
+    // Fetch the timesheet data for the current user
+    getTimesheet(userId);
+  }, [userId]);
+
+  useEffect(() => {
+    // Check if there's an existing entry for the current date
+    if (timesheet) {
+      const entryForToday = timesheet.find(
+        (entry) => entry.date === currentDate
+      );
+
+      if (entryForToday) {
+        // User is already clocked in, so update progressValue with the existing data
+        setProgressValue(
+          entryForToday.hoursWorked + entryForToday.overtimeHours || 0
+        ); // Use the hoursWorked value or set to 0 if undefined
+        setClockedIn(true);
+      }
+    }
+  }, [timesheet, currentDate]);
+
   const handleClockInOut = () => {
-    setClockedIn(!clockedIn);
+    // If clocked in, update the existing entry; otherwise, create a new entry
+    const newHoursWorked = progressValue + parseFloat(overtimeHours) || 9; // Initialize as 9
+
+    if (clockedIn) {
+      // Find an existing entry for the current date
+      const entryForToday = timesheet.find((entry) => {
+        const entryDate = new Date(entry.date);
+        const today = new Date();
+        return (
+          entryDate.getDate() === today.getDate() &&
+          entryDate.getMonth() === today.getMonth() &&
+          entryDate.getFullYear() === today.getFullYear()
+        );
+      });
+
+      if (entryForToday) {
+        // Update the existing entry for the current date
+        updateTimesheetEntry(
+          userId,
+          entryForToday.date, // Use the date from the found entry
+          newHoursWorked,
+          overtimeHours,
+          currentSite
+        );
+      } else {
+        console.error("No matching entry found for the current date.");
+      }
+    } else {
+      // Clock in and create a new entry
+      setClockedIn(true);
+
+      // Check if there's already an entry for the current date, if not, create a new one
+      if (!timesheet) {
+        console.error("Timesheet data is undefined.");
+        return;
+      }
+
+      const entryForToday = timesheet.find((entry) => {
+        const entryDate = new Date(entry.date);
+        const today = new Date();
+        return (
+          entryDate.getDate() === today.getDate() &&
+          entryDate.getMonth() === today.getMonth() &&
+          entryDate.getFullYear() === today.getFullYear()
+        );
+      });
+
+      if (!entryForToday) {
+        postTimesheet(
+          userId,
+          currentDate,
+          newHoursWorked,
+          overtimeHours,
+          currentSite
+        );
+      } else {
+        console.error("An entry already exists for the current date.");
+      }
+    }
+
+    // Optionally, update the local progressValue
+    setProgressValue(newHoursWorked);
   };
 
-  // Function to handle overtime submission
   const handleSubmitOvertime = () => {
     const overtimeValue = parseFloat(overtimeHours);
     if (!isNaN(overtimeValue)) {
-      // Check if the entered value is a valid number
       const updatedProgressValue = progressValue + overtimeValue;
       setProgressValue(updatedProgressValue);
     }
+
+    if (clockedIn) {
+      // If clocked in, update the existing entry for the current date
+      updateTimesheetEntry(
+        userId,
+        currentDate,
+        progressValue,
+        overtimeValue,
+        currentSite
+      );
+    } else {
+      // If not clocked in, create a new entry for the current date
+      postTimesheet(
+        userId,
+        currentDate,
+        progressValue,
+        overtimeValue,
+        currentSite
+      );
+    }
   };
 
-  // Function to clear the overtimeHours field on focus
   const handleOvertimeHoursFocus = () => {
     setOvertimeHours("");
   };

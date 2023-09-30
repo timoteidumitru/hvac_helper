@@ -5,7 +5,7 @@ const router = express.Router();
 
 // requests response to client
 router.put('/update', controller.updateTimesheetEntry);
-router.get('/get', controller.getTimesheet);
+router.post('/get', controller.getTimesheet);
 router.post('/post', controller.postTimesheet);
 
 export = router;

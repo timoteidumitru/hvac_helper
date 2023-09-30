@@ -1,4 +1,3 @@
-// TimesheetContext.js
 import React, { createContext, useContext, useState } from "react";
 import axios from "../api/axios";
 
@@ -44,10 +43,10 @@ export const TimesheetProvider = ({ children }) => {
   const getTimesheet = async (userId) => {
     try {
       // Use Axios to make a GET request
-      const response = await axios.get({ userId });
+      const response = await axios.post("/timesheet/get", { userId });
 
       // Handle the response and update the local state
-      setTimesheet(response.data);
+      setTimesheet(response?.data);
     } catch (error) {
       console.error(error);
     }
@@ -63,7 +62,7 @@ export const TimesheetProvider = ({ children }) => {
   ) => {
     try {
       // Use Axios to make a POST request
-      const response = await axios.post("/timesheet/create", {
+      const response = await axios.post("/timesheet/post", {
         userId,
         date,
         hoursWorked,
