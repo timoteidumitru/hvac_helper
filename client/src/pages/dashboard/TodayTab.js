@@ -1,142 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Typography, Grid, Button, Box, TextField } from "@mui/material";
-import jwt_decode from "jwt-decode";
 import CircularProgress from "./CircularProgressBar";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useTimesheet } from "../../context/TimesheetProvider";
 import { useAuth } from "../../context/AuthContext";
+import { Select, MenuItem } from "@mui/material"; // Import Select and MenuItem
 
 const TodayTab = () => {
   const [clockedIn, setClockedIn] = useState(false);
-  const [progressValue, setProgressValue] = useState(0); // Initialize progressValue as 0
+  const [progressValue, setProgressValue] = useState(0);
   const [overtimeHours, setOvertimeHours] = useState(0);
+  const [selectedSite, setSelectedSite] = useState(""); // State for selected site
 
   const { updateTimesheetEntry, postTimesheet, getTimesheet, timesheet } =
     useTimesheet();
   const { token } = useAuth();
 
-  const decodedToken = jwt_decode(token);
-  const userId = decodedToken.userId;
-  const currentSite = "70 Chancery Lane";
-  const currentDate = new Date().toISOString().split("T")[0];
-
-  useEffect(() => {
-    // Fetch the timesheet data for the current user
-    getTimesheet(userId);
-  }, [userId]);
-
-  useEffect(() => {
-    // Check if there's an existing entry for the current date
-    if (timesheet) {
-      const entryForToday = timesheet.find(
-        (entry) => entry.date === currentDate
-      );
-
-      if (entryForToday) {
-        // User is already clocked in, so update progressValue with the existing data
-        setProgressValue(
-          entryForToday.hoursWorked + entryForToday.overtimeHours || 0
-        ); // Use the hoursWorked value or set to 0 if undefined
-        setClockedIn(true);
-      }
-    }
-  }, [timesheet, currentDate]);
-
   const handleClockInOut = () => {
-    // If clocked in, update the existing entry; otherwise, create a new entry
-    const newHoursWorked = progressValue + parseFloat(overtimeHours) || 9; // Initialize as 9
-
-    if (clockedIn) {
-      // Find an existing entry for the current date
-      const entryForToday = timesheet.find((entry) => {
-        const entryDate = new Date(entry.date);
-        const today = new Date();
-        return (
-          entryDate.getDate() === today.getDate() &&
-          entryDate.getMonth() === today.getMonth() &&
-          entryDate.getFullYear() === today.getFullYear()
-        );
-      });
-
-      if (entryForToday) {
-        // Update the existing entry for the current date
-        updateTimesheetEntry(
-          userId,
-          entryForToday.date, // Use the date from the found entry
-          newHoursWorked,
-          overtimeHours,
-          currentSite
-        );
-      } else {
-        console.error("No matching entry found for the current date.");
-      }
-    } else {
-      // Clock in and create a new entry
-      setClockedIn(true);
-
-      // Check if there's already an entry for the current date, if not, create a new one
-      if (!timesheet) {
-        console.error("Timesheet data is undefined.");
-        return;
-      }
-
-      const entryForToday = timesheet.find((entry) => {
-        const entryDate = new Date(entry.date);
-        const today = new Date();
-        return (
-          entryDate.getDate() === today.getDate() &&
-          entryDate.getMonth() === today.getMonth() &&
-          entryDate.getFullYear() === today.getFullYear()
-        );
-      });
-
-      if (!entryForToday) {
-        postTimesheet(
-          userId,
-          currentDate,
-          newHoursWorked,
-          overtimeHours,
-          currentSite
-        );
-      } else {
-        console.error("An entry already exists for the current date.");
-      }
-    }
-
-    // Optionally, update the local progressValue
-    setProgressValue(newHoursWorked);
+    console.log("Signed in for today!");
   };
 
   const handleSubmitOvertime = () => {
-    const overtimeValue = parseFloat(overtimeHours);
-    if (!isNaN(overtimeValue)) {
-      const updatedProgressValue = progressValue + overtimeValue;
-      setProgressValue(updatedProgressValue);
-    }
-
-    if (clockedIn) {
-      // If clocked in, update the existing entry for the current date
-      updateTimesheetEntry(
-        userId,
-        currentDate,
-        progressValue,
-        overtimeValue,
-        currentSite
-      );
-    } else {
-      // If not clocked in, create a new entry for the current date
-      postTimesheet(
-        userId,
-        currentDate,
-        progressValue,
-        overtimeValue,
-        currentSite
-      );
-    }
+    console.log(`Submitted overtime data to: ${overtimeHours} hrs`);
   };
 
   const handleOvertimeHoursFocus = () => {
     setOvertimeHours("");
+  };
+
+  const handleSiteChange = (event) => {
+    console.log("Selected site to: ", event.target.value);
+    setSelectedSite(event.target.value);
   };
 
   return (
@@ -168,11 +62,39 @@ const TodayTab = () => {
         </div>
       ) : (
         <div>
+          {/* Dropdown menu */}
+          <Grid
+            item
+            xs={12}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "20px",
+            }}
+          >
+            <Select
+              label="Select Site: "
+              variant="outlined"
+              fullWidth
+              value={selectedSite}
+              onChange={handleSiteChange}
+            >
+              <MenuItem value={"70 Chancery Lane"}>70 Chancery Lane</MenuItem>
+              <MenuItem value={"Bain Capital"}>Bain Capital</MenuItem>
+              <MenuItem value={"160 Blackfriars Rd"}>
+                160 Blackfriars Rd
+              </MenuItem>
+              <MenuItem value={"Addrian and Hobbs"}>Addrian and Hobbs</MenuItem>
+              <MenuItem value={"King Cross St Pancras"}>
+                King Cross St Pancras
+              </MenuItem>
+            </Select>
+          </Grid>
           <CircularProgress progressValue={progressValue} maxValue={12} />
           <Grid
             container
             spacing={2}
-            style={{ marginTop: "20px", padding: "10px" }}
+            style={{ marginTop: "5px", padding: "10px" }}
           >
             <Grid item xs={12}>
               <Typography variant="body1">
@@ -186,7 +108,7 @@ const TodayTab = () => {
             >
               <TextField
                 type="number"
-                label="Overtime hours"
+                label="Overtime Hours"
                 variant="outlined"
                 fullWidth
                 value={overtimeHours}
