@@ -13,9 +13,7 @@ const updateTimesheetEntry = async (req: Request, res: Response) => {
     }
 
     // Find the entry for the specified date
-    const parsedDate = new Date(date); // Parse the date from the request
-    const isoDate = parsedDate.toISOString();
-    const entryToUpdate = timesheet.entries.find((entry) => entry.date.toISOString() === isoDate);
+    const entryToUpdate = timesheet.entries.find((entry) => entry.date === date);
 
     if (!entryToUpdate) {
       return res.status(404).json({ error: 'Entry not found for the specified date' });

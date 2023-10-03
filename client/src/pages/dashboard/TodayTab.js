@@ -4,24 +4,81 @@ import CircularProgress from "./CircularProgressBar";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useTimesheet } from "../../context/TimesheetProvider";
 import { useAuth } from "../../context/AuthContext";
-import { Select, MenuItem } from "@mui/material"; // Import Select and MenuItem
+import { Select, MenuItem } from "@mui/material";
+import jwt_decode from "jwt-decode";
+import { format } from "date-fns";
 
 const TodayTab = () => {
   const [clockedIn, setClockedIn] = useState(false);
   const [progressValue, setProgressValue] = useState(0);
   const [overtimeHours, setOvertimeHours] = useState(0);
-  const [selectedSite, setSelectedSite] = useState(""); // State for selected site
-
+  const [selectedSite, setSelectedSite] = useState("");
   const { updateTimesheetEntry, postTimesheet, getTimesheet, timesheet } =
     useTimesheet();
   const { token } = useAuth();
 
-  const handleClockInOut = () => {
-    console.log("Signed in for today!");
+  const handleClockInOut = async () => {
+    try {
+      // Check if already clocked in
+      if (clockedIn) {
+        console.log("You are already clocked in.");
+        return;
+      }
+
+      // Retrieve user ID from the authentication context
+      const storedToken = localStorage.getItem("authToken");
+      const decodedToken = jwt_decode(storedToken);
+      const userId = decodedToken?.userId; // Replace with the actual user ID
+
+      // Get the current date and format it as "01/10/2023"
+      const currentDate = format(new Date(), "dd/MM/yyyy");
+
+      // Clock in by posting a new entry
+      await postTimesheet(userId, currentDate, 9, 0, selectedSite); // Assuming overtime hours are initially set to 0
+
+      // Update the UI or state to reflect clocking in
+      setClockedIn(true);
+
+      // After the POST request is successful, you can update your UI or state as needed.
+      console.log("Clocked in successfully.");
+    } catch (error) {
+      console.error("Error clocking in:", error);
+    }
   };
 
-  const handleSubmitOvertime = () => {
-    console.log(`Submitted overtime data to: ${overtimeHours} hrs`);
+  const handleSubmitOvertime = async () => {
+    try {
+      // Retrieve user ID from the authentication context
+      const storedToken = localStorage.getItem("authToken");
+      const decodedToken = jwt_decode(storedToken);
+      const userId = decodedToken?.userId; // Replace with the actual user ID
+
+      // Get the current date and format it as "01/10/2023"
+      const currentDate = format(new Date(), "dd/MM/yyyy");
+
+      // Define the desired date (e.g., "01/10/2023")
+      const desiredDate = "01/10/2023";
+
+      // Check if the current date matches the desired date
+      if (currentDate === desiredDate) {
+        // If the dates match, proceed with posting the entry
+        await postTimesheet(
+          userId,
+          currentDate, // Use the formatted current date
+          9,
+          parseFloat(overtimeHours),
+          selectedSite
+        );
+
+        // After the POST request is successful, you can update your UI or state as needed.
+        console.log("New overtime data submitted successfully.");
+      } else {
+        // If the dates do not match, do not post a new entry
+        console.log("Not posting for the current date.");
+      }
+    } catch (error) {
+      console.error("Error submitting overtime data:", error);
+    }
   };
 
   const handleOvertimeHoursFocus = () => {
@@ -29,7 +86,6 @@ const TodayTab = () => {
   };
 
   const handleSiteChange = (event) => {
-    console.log("Selected site to: ", event.target.value);
     setSelectedSite(event.target.value);
   };
 
@@ -62,18 +118,18 @@ const TodayTab = () => {
         </div>
       ) : (
         <div>
-          {/* Dropdown menu */}
           <Grid
             item
-            xs={12}
+            xs={10}
             style={{
               display: "flex",
               justifyContent: "center",
-              marginTop: "20px",
+              marginTop: "5px",
+              padding: "0 10px",
             }}
           >
             <Select
-              label="Select Site: "
+              label="Select Site"
               variant="outlined"
               fullWidth
               value={selectedSite}
@@ -94,7 +150,7 @@ const TodayTab = () => {
           <Grid
             container
             spacing={2}
-            style={{ marginTop: "5px", padding: "10px" }}
+            style={{ marginTop: "20px", padding: "10px" }}
           >
             <Grid item xs={12}>
               <Typography variant="body1">
