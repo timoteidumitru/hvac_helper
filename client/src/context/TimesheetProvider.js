@@ -72,7 +72,7 @@ export const TimesheetProvider = ({ children }) => {
 
       // Handle the response and update the local state
       const newTimesheetEntry = response.data;
-      setTimesheet([...timesheet, newTimesheetEntry]);
+      setTimesheet(newTimesheetEntry);
     } catch (error) {
       console.error(error);
     }

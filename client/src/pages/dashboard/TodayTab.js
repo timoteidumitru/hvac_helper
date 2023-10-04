@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Grid, Button, Box, TextField } from "@mui/material";
 import CircularProgress from "./CircularProgressBar";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useTimesheet } from "../../context/TimesheetProvider";
-import { useAuth } from "../../context/AuthContext";
 import { Select, MenuItem } from "@mui/material";
 import jwt_decode from "jwt-decode";
 import { format } from "date-fns";
@@ -15,7 +14,20 @@ const TodayTab = () => {
   const [selectedSite, setSelectedSite] = useState("");
   const { updateTimesheetEntry, postTimesheet, getTimesheet, timesheet } =
     useTimesheet();
-  const { token } = useAuth();
+
+  // Retrieve user ID from the authentication context
+  const storedToken = localStorage.getItem("authToken");
+  const decodedToken = jwt_decode(storedToken);
+  const userId = decodedToken?.userId;
+
+  // console.log(timesheet?.entries);
+
+  // Use useEffect to fetch timesheet data when the component is rendered
+  useEffect(() => {
+    if (userId) {
+      getTimesheet(userId);
+    }
+  }, []);
 
   const handleClockInOut = async () => {
     try {
@@ -25,22 +37,45 @@ const TodayTab = () => {
         return;
       }
 
-      // Retrieve user ID from the authentication context
-      const storedToken = localStorage.getItem("authToken");
-      const decodedToken = jwt_decode(storedToken);
-      const userId = decodedToken?.userId; // Replace with the actual user ID
+      // Get the current date and add one month to it
+      const currentDate = new Date();
+      currentDate.setMonth(currentDate.getMonth() + 1);
 
-      // Get the current date and format it as "01/10/2023"
-      const currentDate = format(new Date(), "dd/MM/yyyy");
+      // Format the date as "dd/MM/yyyy"
+      const formattedDate = format(currentDate, "dd/MM/yyyy");
 
-      // Clock in by posting a new entry
-      await postTimesheet(userId, currentDate, 9, 0, selectedSite); // Assuming overtime hours are initially set to 0
+      // Check if there is an existing entry for today's date in the received data
+      const existingEntry = timesheet.find(
+        (entry) => format(new Date(entry.date), "dd/MM/yyyy") === formattedDate
+      );
+
+      if (existingEntry) {
+        // If an entry already exists for today, update it
+        await updateTimesheetEntry(
+          userId,
+          existingEntry._id,
+          formattedDate,
+          9,
+          overtimeHours,
+          selectedSite
+        );
+
+        console.log("Updated existing entry successfully.");
+      } else {
+        // If there is no entry for today, create a new one
+        await postTimesheet(
+          userId,
+          formattedDate,
+          9,
+          parseFloat(overtimeHours),
+          selectedSite
+        );
+
+        console.log("Clocked in successfully.");
+      }
 
       // Update the UI or state to reflect clocking in
       setClockedIn(true);
-
-      // After the POST request is successful, you can update your UI or state as needed.
-      console.log("Clocked in successfully.");
     } catch (error) {
       console.error("Error clocking in:", error);
     }

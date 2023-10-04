@@ -33,7 +33,7 @@ const updateTimesheetEntry = async (req: Request, res: Response) => {
     }
 
     await timesheet.save();
-    res.status(200).json(timesheet);
+    res.status(200).json([timesheet?.entries]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal Server Error' });
