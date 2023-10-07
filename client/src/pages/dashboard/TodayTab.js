@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Grid, Button, Box, TextField } from "@mui/material";
+import {
+  Typography,
+  Grid,
+  Button,
+  Box,
+  TextField,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import CircularProgress from "./CircularProgressBar";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useTimesheet } from "../../context/TimesheetProvider";
-import { Select, MenuItem } from "@mui/material";
 import jwt_decode from "jwt-decode";
 import { format } from "date-fns";
 
@@ -19,8 +26,6 @@ const TodayTab = () => {
   const storedToken = localStorage.getItem("authToken");
   const decodedToken = jwt_decode(storedToken);
   const userId = decodedToken?.userId;
-
-  // console.log(timesheet?.entries);
 
   // Use useEffect to fetch timesheet data when the component is rendered
   useEffect(() => {
@@ -164,12 +169,17 @@ const TodayTab = () => {
             }}
           >
             <Select
-              label="Select Site"
-              variant="outlined"
-              fullWidth
               value={selectedSite}
               onChange={handleSiteChange}
+              sx={{
+                width: "100%",
+                marginTop: "10px",
+              }}
+              variant="outlined"
             >
+              <MenuItem value="">
+                <em>Please select a site!</em>
+              </MenuItem>
               <MenuItem value={"70 Chancery Lane"}>70 Chancery Lane</MenuItem>
               <MenuItem value={"Bain Capital"}>Bain Capital</MenuItem>
               <MenuItem value={"160 Blackfriars Rd"}>
@@ -232,7 +242,7 @@ const TodayTab = () => {
               color={clockedIn ? "secondary" : "primary"}
               size="large"
               onClick={handleClockInOut}
-              disabled={clockedIn}
+              disabled={!selectedSite || clockedIn}
             >
               {clockedIn ? "Clocked In" : "Clock In"}
             </Button>
