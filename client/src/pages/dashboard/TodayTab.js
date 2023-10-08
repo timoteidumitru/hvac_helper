@@ -5,6 +5,8 @@ import {
   Button,
   Box,
   TextField,
+  FormControl,
+  InputLabel,
   MenuItem,
   Select,
 } from "@mui/material";
@@ -15,12 +17,16 @@ import jwt_decode from "jwt-decode";
 import { format } from "date-fns";
 
 const TodayTab = () => {
-  const [clockedIn, setClockedIn] = useState(false);
-  const [progressValue, setProgressValue] = useState(0);
-  const [overtimeHours, setOvertimeHours] = useState(0);
-  const [selectedSite, setSelectedSite] = useState("");
   const { updateTimesheetEntry, postTimesheet, getTimesheet, timesheet } =
     useTimesheet();
+  const [clockedIn, setClockedIn] = useState(false);
+  const [progressValue, setProgressValue] = useState(
+    0 || timesheet[0]?.hoursWorked + 1.5 * timesheet[0]?.overtime
+  );
+  const [overtimeHours, setOvertimeHours] = useState(
+    0 || timesheet[0]?.overtime
+  );
+  const [selectedSite, setSelectedSite] = useState("" || timesheet[0]?.project); // Initialize with an empty string
 
   // Retrieve user ID from the authentication context
   const storedToken = localStorage.getItem("authToken");
@@ -164,32 +170,38 @@ const TodayTab = () => {
             style={{
               display: "flex",
               justifyContent: "center",
-              marginTop: "5px",
+              marginTop: "15px",
               padding: "0 10px",
             }}
           >
-            <Select
-              value={selectedSite}
-              onChange={handleSiteChange}
-              sx={{
-                width: "100%",
-                marginTop: "10px",
-              }}
-              variant="outlined"
-            >
-              <MenuItem value="">
-                <em>Please select a site!</em>
-              </MenuItem>
-              <MenuItem value={"70 Chancery Lane"}>70 Chancery Lane</MenuItem>
-              <MenuItem value={"Bain Capital"}>Bain Capital</MenuItem>
-              <MenuItem value={"160 Blackfriars Rd"}>
-                160 Blackfriars Rd
-              </MenuItem>
-              <MenuItem value={"Addrian and Hobbs"}>Addrian and Hobbs</MenuItem>
-              <MenuItem value={"King Cross St Pancras"}>
-                King Cross St Pancras
-              </MenuItem>
-            </Select>
+            <FormControl fullWidth>
+              <InputLabel
+                id="select-site-label"
+                htmlFor="select-site"
+                shrink={Boolean(selectedSite)}
+              >
+                Please Select a Site!
+              </InputLabel>
+              <Select
+                labelId="select-site-label"
+                id="select-site"
+                value={selectedSite}
+                onChange={handleSiteChange}
+                variant="outlined" // Add this line to use an outlined input
+              >
+                <MenuItem value={"70 Chancery Lane"}>70 Chancery Lane</MenuItem>
+                <MenuItem value={"Bain Capital"}>Bain Capital</MenuItem>
+                <MenuItem value={"160 Blackfriars Rd"}>
+                  160 Blackfriars Rd
+                </MenuItem>
+                <MenuItem value={"Addrian and Hobbs"}>
+                  Addrian and Hobbs
+                </MenuItem>
+                <MenuItem value={"King Cross St Pancras"}>
+                  King Cross St Pancras
+                </MenuItem>
+              </Select>
+            </FormControl>
           </Grid>
           <CircularProgress progressValue={progressValue} maxValue={12} />
           <Grid
