@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Typography,
   Grid,
@@ -26,19 +26,12 @@ const TodayTab = () => {
   const [overtimeHours, setOvertimeHours] = useState(
     0 || timesheet[0]?.overtime
   );
-  const [selectedSite, setSelectedSite] = useState("" || timesheet[0]?.project); // Initialize with an empty string
+  const [selectedSite, setSelectedSite] = useState("" || timesheet[0]?.project);
 
   // Retrieve user ID from the authentication context
   const storedToken = localStorage.getItem("authToken");
   const decodedToken = jwt_decode(storedToken);
   const userId = decodedToken?.userId;
-
-  // Use useEffect to fetch timesheet data when the component is rendered
-  useEffect(() => {
-    if (userId) {
-      getTimesheet(userId);
-    }
-  }, []);
 
   const handleClockInOut = async () => {
     try {
@@ -50,15 +43,23 @@ const TodayTab = () => {
 
       // Get the current date and add one month to it
       const currentDate = new Date();
-      currentDate.setMonth(currentDate.getMonth() + 1);
+      // currentDate.setMonth(currentDate.getMonth());
 
       // Format the date as "dd/MM/yyyy"
-      const formattedDate = format(currentDate, "dd/MM/yyyy");
+      const formattedDate = format(currentDate, "dd-MM-yyyy");
 
       // Check if there is an existing entry for today's date in the received data
       const existingEntry = timesheet.find(
-        (entry) => format(new Date(entry.date), "dd/MM/yyyy") === formattedDate
+        (entry) => (
+          format(new Date(entry.date.split("T")[0]), "dd-MM-yyyy") ===
+            formattedDate,
+          console.log(
+            formattedDate,
+            format(new Date(entry.date.split("T")[0]), "dd-MM-yyyy")
+          )
+        )
       );
+      // console.log(existingEntry);
 
       if (existingEntry) {
         // If an entry already exists for today, update it
@@ -187,8 +188,11 @@ const TodayTab = () => {
                 id="select-site"
                 value={selectedSite}
                 onChange={handleSiteChange}
-                variant="outlined" // Add this line to use an outlined input
+                variant="outlined"
               >
+                <MenuItem value="">
+                  <em>Not in today!</em>
+                </MenuItem>
                 <MenuItem value={"70 Chancery Lane"}>70 Chancery Lane</MenuItem>
                 <MenuItem value={"Bain Capital"}>Bain Capital</MenuItem>
                 <MenuItem value={"160 Blackfriars Rd"}>
