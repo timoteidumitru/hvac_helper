@@ -20,13 +20,9 @@ const TodayTab = () => {
   const { updateTimesheetEntry, postTimesheet, getTimesheet, timesheet } =
     useTimesheet();
   const [clockedIn, setClockedIn] = useState(false);
-  const [progressValue, setProgressValue] = useState(
-    0 || timesheet[0]?.hoursWorked + 1.5 * timesheet[0]?.overtime
-  );
-  const [overtimeHours, setOvertimeHours] = useState(
-    0 || timesheet[0]?.overtime
-  );
-  const [selectedSite, setSelectedSite] = useState("" || timesheet[0]?.project);
+  const [progressValue, setProgressValue] = useState(0);
+  const [overtimeHours, setOvertimeHours] = useState(0);
+  const [selectedSite, setSelectedSite] = useState("");
 
   // Retrieve user ID from the authentication context
   const storedToken = localStorage.getItem("authToken");
@@ -41,48 +37,35 @@ const TodayTab = () => {
         return;
       }
 
-      // Get the current date and add one month to it
-      const currentDate = new Date();
-      // currentDate.setMonth(currentDate.getMonth());
-
-      // Format the date as "dd/MM/yyyy"
-      const formattedDate = format(currentDate, "dd-MM-yyyy");
+      // Get the current date and format it as "dd-MM-yyyy"
+      const currentDate = format(new Date(), "yyyy-MM-dd");
 
       // Check if there is an existing entry for today's date in the received data
       const existingEntry = timesheet.find(
-        (entry) => (
-          format(new Date(entry.date.split("T")[0]), "dd-MM-yyyy") ===
-            formattedDate,
-          console.log(
-            formattedDate,
-            format(new Date(entry.date.split("T")[0]), "dd-MM-yyyy")
-          )
-        )
+        (entry) =>
+          format(new Date(entry.date.split("T")[0]), "yyyy-MM-dd") ===
+          currentDate
       );
-      // console.log(existingEntry);
 
       if (existingEntry) {
-        // If an entry already exists for today, update it
-        await updateTimesheetEntry(
-          userId,
-          existingEntry._id,
-          formattedDate,
-          9,
-          overtimeHours,
-          selectedSite
-        );
-
+        // If an entry already exists for today, update it using postTimesheet
+        await updateTimesheetEntry({
+          userId: userId,
+          date: currentDate,
+          newHoursWorked: 9,
+          newOvertime: overtimeHours,
+          newProject: selectedSite,
+        });
         console.log("Updated existing entry successfully.");
       } else {
-        // If there is no entry for today, create a new one
-        await postTimesheet(
-          userId,
-          formattedDate,
-          9,
-          parseFloat(overtimeHours),
-          selectedSite
-        );
-
+        // If there is no entry for today, create a new one using postTimesheet
+        await postTimesheet({
+          userId: userId,
+          date: currentDate,
+          hoursWorked: 9,
+          overtime: overtimeHours,
+          project: selectedSite,
+        });
         console.log("Clocked in successfully.");
       }
 
@@ -94,38 +77,7 @@ const TodayTab = () => {
   };
 
   const handleSubmitOvertime = async () => {
-    try {
-      // Retrieve user ID from the authentication context
-      const storedToken = localStorage.getItem("authToken");
-      const decodedToken = jwt_decode(storedToken);
-      const userId = decodedToken?.userId; // Replace with the actual user ID
-
-      // Get the current date and format it as "01/10/2023"
-      const currentDate = format(new Date(), "dd/MM/yyyy");
-
-      // Define the desired date (e.g., "01/10/2023")
-      const desiredDate = "01/10/2023";
-
-      // Check if the current date matches the desired date
-      if (currentDate === desiredDate) {
-        // If the dates match, proceed with posting the entry
-        await postTimesheet(
-          userId,
-          currentDate, // Use the formatted current date
-          9,
-          parseFloat(overtimeHours),
-          selectedSite
-        );
-
-        // After the POST request is successful, you can update your UI or state as needed.
-        console.log("New overtime data submitted successfully.");
-      } else {
-        // If the dates do not match, do not post a new entry
-        console.log("Not posting for the current date.");
-      }
-    } catch (error) {
-      console.error("Error submitting overtime data:", error);
-    }
+    console.log("Overtime Submited");
   };
 
   const handleOvertimeHoursFocus = () => {
