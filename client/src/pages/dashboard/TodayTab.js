@@ -38,34 +38,33 @@ const TodayTab = () => {
       }
 
       // Get the current date and format it as "dd-MM-yyyy"
-      const currentDate = format(new Date(), "yyyy-MM-dd");
+      const currentDate = format(new Date(), "dd-MM-yyyy");
 
       // Check if there is an existing entry for today's date in the received data
       const existingEntry = timesheet.find(
-        (entry) =>
-          format(new Date(entry.date.split("T")[0]), "yyyy-MM-dd") ===
-          currentDate
+        (entry) => entry.date === currentDate
       );
+      console.log(existingEntry);
 
       if (existingEntry) {
         // If an entry already exists for today, update it using postTimesheet
-        await updateTimesheetEntry({
-          userId: userId,
-          date: currentDate,
-          newHoursWorked: 9,
-          newOvertime: overtimeHours,
-          newProject: selectedSite,
-        });
+        await updateTimesheetEntry(
+          userId,
+          currentDate,
+          9,
+          overtimeHours,
+          selectedSite
+        );
         console.log("Updated existing entry successfully.");
       } else {
         // If there is no entry for today, create a new one using postTimesheet
-        await postTimesheet({
-          userId: userId,
-          date: currentDate,
-          hoursWorked: 9,
-          overtime: overtimeHours,
-          project: selectedSite,
-        });
+        await postTimesheet(
+          userId,
+          currentDate,
+          9,
+          overtimeHours,
+          selectedSite
+        );
         console.log("Clocked in successfully.");
       }
 

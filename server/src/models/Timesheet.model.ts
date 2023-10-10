@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const timesheetEntrySchema = new Schema({
-  date: Date,
+  date: String,
   hoursWorked: Number,
   overtime: Number,
   project: String
@@ -19,7 +19,7 @@ const timesheetSchema = new Schema({
 
 export interface TimesheetDocument extends mongoose.Document {
   entries: {
-    date: Date;
+    date: string;
     hoursWorked: number;
     overtime: number;
     project: string;

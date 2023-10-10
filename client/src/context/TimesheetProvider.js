@@ -15,18 +15,18 @@ export const TimesheetProvider = ({ children }) => {
   const updateTimesheetEntry = async (
     userId,
     date,
-    newHoursWorked,
-    newOvertime,
-    newProject
+    hoursWorked,
+    overtime,
+    project
   ) => {
     try {
       // Use Axios to make a PUT request
       const response = await axios.put("/timesheet/update", {
         userId,
         date,
-        newHoursWorked,
-        newOvertime,
-        newProject,
+        hoursWorked,
+        overtime,
+        project,
       });
 
       // Handle the response and update the local state

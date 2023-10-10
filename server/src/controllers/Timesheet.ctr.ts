@@ -3,7 +3,7 @@ import { Timesheet } from '../models/Timesheet.model';
 
 // Update a specific entry in the timesheet
 const updateTimesheetEntry = async (req: Request, res: Response) => {
-  const { userId, date, newHoursWorked, newOvertime, newProject } = req.body;
+  const { userId, date, hoursWorked, overtime, project } = req.body;
 
   try {
     const timesheet = await Timesheet.findOne({ userId });
@@ -20,16 +20,16 @@ const updateTimesheetEntry = async (req: Request, res: Response) => {
     }
 
     // Update the entry if the new values are provided
-    if (newHoursWorked !== undefined) {
-      entryToUpdate.hoursWorked = newHoursWorked;
+    if (hoursWorked !== undefined) {
+      entryToUpdate.hoursWorked = hoursWorked;
     }
 
-    if (newOvertime !== undefined) {
-      entryToUpdate.overtime = newOvertime;
+    if (overtime !== undefined) {
+      entryToUpdate.overtime = overtime;
     }
 
-    if (newProject !== undefined) {
-      entryToUpdate.project = newProject;
+    if (project !== undefined) {
+      entryToUpdate.project = project;
     }
 
     await timesheet.save();
